@@ -5,8 +5,13 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.BaseAdapter;
+import android.widget.HeaderViewListAdapter;
+import android.widget.ListView;
 
 import es.coru.andiag.seriesbook.R;
 
@@ -47,5 +52,18 @@ public class BaseActivity extends AppCompatActivity {
             return;
         }
         setTheme(R.style.AppTheme);
+    }
+
+    //This method allow us to update the navigation drawer when we add elements to the menu
+    protected void updateNavigationDrawerView(NavigationView navigationView) {
+        for (int i = 0, count = navigationView.getChildCount(); i < count; i++) {
+            final View child = navigationView.getChildAt(i);
+            if (child != null && child instanceof ListView) {
+                final ListView menuView = (ListView) child;
+                final HeaderViewListAdapter adapter = (HeaderViewListAdapter) menuView.getAdapter();
+                final BaseAdapter wrapped = (BaseAdapter) adapter.getWrappedAdapter();
+                wrapped.notifyDataSetChanged();
+            }
+        }
     }
 }
