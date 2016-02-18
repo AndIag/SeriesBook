@@ -1,6 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <!-- Light Theme Colors -->
+    <color name="lightPrimary">#8BC34A</color>
+    <color name="lightPrimaryDark">#1B5E20</color>
+    <color name="lightAccent">#CDDC39</color>
+
+    <color name="lightBackground">@color/grey100</color>
+
+    <!-- Dark Theme Colors -->
+    <color name="darkPrimary">#8BC34A</color>
+    <color name="darkPrimaryDark">#1B5E20</color>
+    <color name="darkAccent">#CDDC39</color>
+
+    <color name="darkBackground">@color/grey900</color>
+
+    <!-- Orange Theme Colors -->
+
+    <color name="grey100">#F5F5F5</color>
+    <color name="grey900">#212121</color>
+
+    <!-- CardView -->
+    <item name="card_light" type="color">#BDBDBD</item>
+    <item name="card_dark" type="color">#424242</item>
+
+    <!-- CardView -->
+
+    <!-- Categories Theme Dark -->
+
+    <!-- Categories Theme Light -->
+
 </resources>
