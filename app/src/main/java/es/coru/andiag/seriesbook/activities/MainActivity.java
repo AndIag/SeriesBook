@@ -26,18 +26,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void loadNavigationDrawer(Toolbar toolbar) {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
-        //Here we should add all our categories
+        //Here we add all our categories
         if (categoryList != null) {
             final Menu menu = navigationView.getMenu();
             for (Category c : categoryList) {
                 menu.add(c.getName());
             }
+            //add_category option is added here
             menu.add(getResources().getString(R.string.add_category));
         }
 
