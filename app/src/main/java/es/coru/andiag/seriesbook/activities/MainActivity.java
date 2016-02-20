@@ -8,14 +8,21 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.List;
+
 import es.coru.andiag.seriesbook.R;
+import es.coru.andiag.seriesbook.db.DAO;
+import es.coru.andiag.seriesbook.entities.Category;
 import es.coru.andiag.seriesbook.fragments.SettingsFragment;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private List<Category> categoryList;
 
     private void loadNavigationDrawer(Toolbar toolbar) {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -26,9 +33,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         //Here we should add all our categories
-        final Menu menu = navigationView.getMenu();
-        for (int i = 1; i <= 3; i++) {
-            menu.add("Runtime item " + i);
+        if (categoryList != null) {
+            final Menu menu = navigationView.getMenu();
+            for (Category c : categoryList) {
+                menu.add(c.getName());
+            }
+            menu.add(getResources().getString(R.string.add_category));
         }
 
         //Update nav_view
@@ -43,6 +53,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        categoryList = DAO.getInstance(this).getCategories();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -96,10 +107,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        if (String.valueOf(item.getTitle()).equals(getResources().getString(R.string.add_category))) {
+            Log.d(TAG, "Adding quote");
+        } else {
+            switch (String.valueOf(item.getTitle())) {
 
-        switch (id) {
-
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
