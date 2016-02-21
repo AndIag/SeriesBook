@@ -20,8 +20,8 @@ public class BaseActivity extends AppCompatActivity {
     public static final String TAG = "BaseActivity";
     public static final String PREF_THEME_KEY = "theme_list";
 
-    public final static int THEME_DARK = 0;
-    public final static int THEME_LIGHT = 1;
+    public final static int THEME_LIGHT = 0;
+    public final static int THEME_DARK = 1;
 
     public static int getTheme(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

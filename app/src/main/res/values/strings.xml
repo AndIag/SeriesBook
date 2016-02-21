@@ -5,8 +5,8 @@
     <string name="pref_title_theme">Theme</string>
 
     <string-array name="pref_theme_list_titles">
-        <item>Dark</item>
         <item>Light</item>
+        <item>Dark</item>
     </string-array>
     <string-array name="pref_theme_list_values">
         <item>0</item>

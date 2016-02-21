@@ -31,7 +31,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-
         //Here we add all our categories
         if (categoryList != null) {
             final Menu menu = navigationView.getMenu();
