@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import es.coru.andiag.seriesbook.R;
@@ -26,26 +28,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private List<Category> categoryList;
 
     private void loadNavigationDrawer(Toolbar toolbar) {
-        ArrayList<String> noDeletableOptions = new ArrayList<>();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        ListView list = (ListView) navigationView.findViewById(R.id.drawer_list);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        //Here we add all our categories
-        if (categoryList != null) {
-            final Menu menu = navigationView.getMenu();
-            for (Category c : categoryList) {
-                menu.add(c.getName());
-            }
-            //add_category option is added here
-            menu.add(getResources().getString(R.string.add_category));
-            noDeletableOptions.add(getResources().getString(R.string.add_category));
-        }
+        //Add categories to nav_drawer
+        String[] items = {"2", getResources().getString(R.string.add_category)};
+        ListAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
+        list.setAdapter(adapter);
 
-        //Update nav_view
-        updateNavigationDrawerView(navigationView, noDeletableOptions);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
