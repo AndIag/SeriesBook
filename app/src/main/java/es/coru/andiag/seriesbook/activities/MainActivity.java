@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.coru.andiag.seriesbook.R;
@@ -25,6 +26,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private List<Category> categoryList;
 
     private void loadNavigationDrawer(Toolbar toolbar) {
+        ArrayList<String> noDeletableOptions = new ArrayList<>();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -39,10 +41,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
             //add_category option is added here
             menu.add(getResources().getString(R.string.add_category));
+            noDeletableOptions.add(getResources().getString(R.string.add_category));
         }
 
         //Update nav_view
-        updateNavigationDrawerView(navigationView);
+        updateNavigationDrawerView(navigationView, noDeletableOptions);
         navigationView.setNavigationItemSelectedListener(this);
     }
 

@@ -7,11 +7,14 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
+
+import java.util.List;
 
 import es.coru.andiag.seriesbook.R;
 
@@ -55,9 +58,21 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     //This method allow us to update the navigation drawer when we add elements to the menu
-    protected void updateNavigationDrawerView(NavigationView navigationView) {
+    protected void updateNavigationDrawerView(NavigationView navigationView, List<String> noDeletableOptions) {
         for (int i = 0, count = navigationView.getChildCount(); i < count; i++) {
             final View child = navigationView.getChildAt(i);
+            final MenuItem menuItem = navigationView.getMenu().getItem(i);
+            //If the child is a deletable option we add an onLongClickListener to remove it
+            if (menuItem != null && !noDeletableOptions.contains(String.valueOf(menuItem.getTitle()))) {
+                if (child != null) {
+                    child.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            return false;
+                        }
+                    });
+                }
+            }
             if (child != null && child instanceof ListView) {
                 final ListView menuView = (ListView) child;
                 final HeaderViewListAdapter adapter = (HeaderViewListAdapter) menuView.getAdapter();
