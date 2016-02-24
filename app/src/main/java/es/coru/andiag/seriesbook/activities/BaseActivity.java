@@ -8,6 +8,8 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import es.coru.andiag.seriesbook.R;
 
 public class BaseActivity extends AppCompatActivity {
@@ -28,6 +30,19 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         updateTheme();
     }
+
+
+    //region Creating our own dialogs
+    public void generateMaterialDialog(int titleResource, int customView, int positiveTextResource, MaterialDialog.SingleButtonCallback positiveCallback) {
+        new MaterialDialog.Builder(this)
+                .title(titleResource)
+                .positiveText(positiveTextResource)
+                .negativeText(R.string.cancel)
+                .customView(customView, true)
+                .onPositive(positiveCallback)
+                .show();
+    }
+    //endregion
 
     private void updateTheme() { //Change theme to all activities that extends BaseActivity
         if (getTheme(getApplicationContext()) == THEME_DARK) {
