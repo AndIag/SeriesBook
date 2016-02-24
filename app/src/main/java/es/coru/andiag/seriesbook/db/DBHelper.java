@@ -15,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String CATEGORY_COLOR = "color"; //Color int value
     private final static String TAG = "DBHelper";
     private static final String DATABASE_NAME = "sbai.sqlite";
-    private static final int VERSION = 1;
+    private static final int VERSION = 3;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);
@@ -27,6 +27,16 @@ public class DBHelper extends SQLiteOpenHelper {
                 + CATEGORY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + CATEGORY_NAME + " TEXT NOT NULL UNIQUE, "
                 + CATEGORY_COLOR + " INTEGER)");
+
+        sqLiteDatabase.execSQL("INSERT INTO " + CATEGORY_TABLE + " ( "
+                + CATEGORY_NAME + " , " + CATEGORY_COLOR + " )"
+                + " VALUES " + "('Following',3)");
+        sqLiteDatabase.execSQL("INSERT INTO " + CATEGORY_TABLE + " ( "
+                + CATEGORY_NAME + " , " + CATEGORY_COLOR + " )"
+                + " VALUES " + "('Favourites',3)");
+        sqLiteDatabase.execSQL("INSERT INTO " + CATEGORY_TABLE + " ( "
+                + CATEGORY_NAME + " , " + CATEGORY_COLOR + " )"
+                + " VALUES " + "('Viewed',3)");
     }
 
     @Override

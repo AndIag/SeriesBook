@@ -1,7 +1,7 @@
 <resources>
     <style name="AppTheme" parent="AppTheme.Base"/>
     <!-- Base application theme. -->
-    <style name="AppTheme.Base" parent="Theme.AppCompat.Light">
+    <style name="AppTheme.Base" parent="MaterialDrawerTheme.Light.ActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/lightPrimary</item>
         <item name="colorPrimaryDark">@color/lightPrimaryDark</item>
@@ -18,7 +18,7 @@
         <item name="cardStyle">@style/CardViewStyle.Light</item>
     </style>
 
-    <style name="AppTheme.Dark" parent="Theme.AppCompat">
+    <style name="AppTheme.Dark" parent="MaterialDrawerTheme.ActionBar">
         <item name="colorPrimary">@color/darkPrimary</item>
         <item name="colorPrimaryDark">@color/darkPrimaryDark</item>
         <item name="colorAccent">@color/darkAccent</item>
@@ -30,7 +30,6 @@
         <item name="android:buttonStyle">@style/DarkButton</item>
 
         <item name="cardStyle">@style/CardViewStyle.Dark</item>
-
     </style>
 
     <!-- ActionBar Style -->

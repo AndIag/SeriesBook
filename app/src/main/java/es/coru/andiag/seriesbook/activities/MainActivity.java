@@ -1,20 +1,25 @@
 package es.coru.andiag.seriesbook.activities;
 
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import es.coru.andiag.seriesbook.R;
@@ -26,20 +31,46 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private List<Category> categoryList;
 
-    private void loadNavigationDrawer(Toolbar toolbar) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        ListView list = (ListView) navigationView.findViewById(R.id.drawer_list);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+    private Drawer drawer = null;
+    private AccountHeader header = null;
 
-        //Add categories to nav_drawer
-        String[] items = {"2", getResources().getString(R.string.add_category)};
-        ListAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
-        list.setAdapter(adapter);
+    private void createNavigationDrawer(Toolbar toolbar, Bundle savedInstanceState) {
 
-        navigationView.setNavigationItemSelectedListener(this);
+        ArrayList<PrimaryDrawerItem> drawerItems = new ArrayList<>();
+        DrawerBuilder builder = new DrawerBuilder(this).withToolbar(toolbar)
+                .withDisplayBelowStatusBar(false)
+                .withActionBarDrawerToggleAnimated(true)
+                .withAccountHeader(header)
+                .withSavedInstance(savedInstanceState)
+                .addStickyDrawerItems(
+                        new SecondaryDrawerItem().withName(R.string.action_settings).withIcon(android.R.drawable.ic_menu_manage).withIdentifier(10),
+                        new SecondaryDrawerItem().withName(R.string.action_about).withIcon(android.R.drawable.ic_menu_manage)
+                );
+
+        for (Category c : categoryList) {
+            builder.addDrawerItems(new PrimaryDrawerItem().withName(c.getName()).withIcon(android.R.drawable.ic_media_play));
+        }
+        builder.addDrawerItems(new PrimaryDrawerItem().withName(getString(R.string.add_category)).withIcon(R.drawable.ic_action_add));
+
+        drawer = builder.build();
+
+    }
+
+    private void buildHeader() {
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        int color = typedValue.data;
+        ColorDrawable drawable = new ColorDrawable();
+        drawable.setColor(color);
+
+        header = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(drawable)
+                .addProfiles(
+                        new ProfileDrawerItem().withName("AndIag").withEmail("andiag.dev@gmail.com").withIcon(R.drawable.andiag)
+                )
+                .build();
+
     }
 
     @Override
@@ -60,18 +91,25 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
 
-        loadNavigationDrawer(toolbar);
+        buildHeader();
+        createNavigationDrawer(toolbar, savedInstanceState);
 
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawer != null && drawer.isDrawerOpen()) {
+            drawer.closeDrawer();
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //add the values which need to be saved from the drawer to the bundle
+        outState = drawer.saveInstanceState(outState);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -91,7 +129,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (id) {
             case R.id.action_settings:
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_container, new SettingsFragment())
+                        .replace(R.id.frame_container, new SettingsFragment())
                         .commit();
                 return true;
         }
@@ -105,9 +143,5 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
-    public void closeDrawerLayout() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-    }
 
 }
