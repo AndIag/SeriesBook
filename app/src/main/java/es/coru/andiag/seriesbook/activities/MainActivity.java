@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -38,31 +39,6 @@ public class MainActivity extends BaseActivity {
     private static final long NAV_ADD_CATEGORY = 5;
     private static final long NAV_SETTINGS_IDENTIFIER = 10;
     private static final long NAV_ABOUT_IDENTIFIER = 11;
-    private List<Category> categoryList;
-    private Drawer drawer = null;
-    //region Listeners and Callbacks
-    private final MaterialDialog.SingleButtonCallback addCategoryDialogCallback = new MaterialDialog.SingleButtonCallback() {
-        @Override
-        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-            EditText categoryName = (EditText) dialog.getView().findViewById(R.id.categoryNameText);
-            boolean a = !categoryName.getText().toString().matches("");
-            if (a) {
-                Toast.makeText(getApplicationContext(),
-                        getResources().getString(R.string.creating_category) + " : " + categoryName.getText().toString(),
-                        Toast.LENGTH_SHORT).show();
-
-                Category category = new Category();
-                category.setName(categoryName.getText().toString());
-
-                category = DAO.getInstance(getApplicationContext()).addCategory(category);
-                categoryList.add(category);
-                drawer.addItemAtPosition(new PrimaryDrawerItem().withName(category.getName()).withIcon(android.R.drawable.ic_media_play), drawer.getDrawerItems().size());
-                dialog.dismiss();
-            } else {
-                categoryName.setError(getApplicationContext().getString(R.string.error_category));
-            }
-        }
-    };
     private final Drawer.OnDrawerItemClickListener drawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
         @Override
         public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -86,6 +62,32 @@ public class MainActivity extends BaseActivity {
             }
             //Categories fragment behavior
             return false;
+        }
+    };
+    private List<Category> categoryList;
+    private Drawer drawer = null;
+    //region Listeners and Callbacks
+    private final MaterialDialog.SingleButtonCallback addCategoryDialogCallback = new MaterialDialog.SingleButtonCallback() {
+        @Override
+        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+            EditText categoryName = (EditText) dialog.getView().findViewById(R.id.categoryNameText);
+            boolean a = !categoryName.getText().toString().matches("");
+            if (a) {
+                Toast.makeText(getApplicationContext(),
+                        getResources().getString(R.string.creating_category) + " : " + categoryName.getText().toString(),
+                        Toast.LENGTH_SHORT).show();
+
+                Category category = new Category();
+                category.setName(categoryName.getText().toString());
+
+                category = DAO.getInstance(getApplicationContext()).addCategory(category);
+                categoryList.add(category);
+                drawer.addItemAtPosition(new PrimaryDrawerItem().withName(category.getName()).withIcon(android.R.drawable.ic_media_play), drawer.getDrawerItems().size());
+                dialog.dismiss();
+            } else {
+                TextInputLayout inputLayout = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_category);
+                inputLayout.setError(getApplicationContext().getString(R.string.error_category));
+            }
         }
     };
     private final Drawer.OnDrawerItemLongClickListener drawerItemLongClickListener = new Drawer.OnDrawerItemLongClickListener() {
