@@ -36,6 +36,7 @@ public class BaseActivity extends AppCompatActivity {
     public void generateMaterialDialog(int titleResource, int customView, int positiveTextResource, MaterialDialog.SingleButtonCallback positiveCallback) {
         new MaterialDialog.Builder(this)
                 .title(titleResource)
+                .autoDismiss(false)
                 .positiveText(positiveTextResource)
                 .negativeText(R.string.cancel)
                 .customView(customView, true)
