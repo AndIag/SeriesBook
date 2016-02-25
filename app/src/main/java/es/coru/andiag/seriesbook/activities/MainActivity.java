@@ -38,8 +38,6 @@ public class MainActivity extends BaseActivity {
     private static final long NAV_ADD_CATEGORY = 5;
     private static final long NAV_SETTINGS_IDENTIFIER = 10;
     private static final long NAV_ABOUT_IDENTIFIER = 11;
-    private List<Category> categoryList;
-    private Drawer drawer = null;
     private final Drawer.OnDrawerItemClickListener drawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
         @Override
         public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -47,28 +45,7 @@ public class MainActivity extends BaseActivity {
             if (identifier >= 0) { //Static features behavior
                 if (identifier == NAV_ADD_CATEGORY) {
                     Log.d(TAG, "Adding category");
-                    generateMaterialDialog(R.string.creating_category, R.layout.dialog_add_category, R.string.create, new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            EditText categoryName = (EditText) dialog.getView().findViewById(R.id.categoryNameText);
-                            boolean a = !categoryName.getText().toString().matches("");
-                            if (a) {
-                                Toast.makeText(getApplicationContext(),
-                                        getResources().getString(R.string.creating_category) + " : " + categoryName.getText().toString(),
-                                        Toast.LENGTH_SHORT).show();
-
-                                Category category = new Category();
-                                category.setName(categoryName.getText().toString());
-
-                                category = DAO.getInstance(getApplicationContext()).addCategory(category);
-                                categoryList.add(category);
-                                drawer.addItemAtPosition(new PrimaryDrawerItem().withName(category.getName()).withIcon(android.R.drawable.ic_media_play), drawer.getDrawerItems().size());
-                            } else {
-                                categoryName.setError(getApplicationContext().getString(R.string.error_category));
-                            }
-
-                        }
-                    });
+                    generateMaterialDialog(R.string.creating_category, R.layout.dialog_add_category, R.string.create, addCategoryDialogCallback);
                     return true;
                 }
                 if (identifier == NAV_SETTINGS_IDENTIFIER) {
@@ -84,6 +61,29 @@ public class MainActivity extends BaseActivity {
             }
             //Categories fragment behavior
             return false;
+        }
+    };
+    private List<Category> categoryList;
+    private Drawer drawer = null;
+    private final MaterialDialog.SingleButtonCallback addCategoryDialogCallback = new MaterialDialog.SingleButtonCallback() {
+        @Override
+        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+            EditText categoryName = (EditText) dialog.getView().findViewById(R.id.categoryNameText);
+            boolean a = !categoryName.getText().toString().matches("");
+            if (a) {
+                Toast.makeText(getApplicationContext(),
+                        getResources().getString(R.string.creating_category) + " : " + categoryName.getText().toString(),
+                        Toast.LENGTH_SHORT).show();
+
+                Category category = new Category();
+                category.setName(categoryName.getText().toString());
+
+                category = DAO.getInstance(getApplicationContext()).addCategory(category);
+                categoryList.add(category);
+                drawer.addItemAtPosition(new PrimaryDrawerItem().withName(category.getName()).withIcon(android.R.drawable.ic_media_play), drawer.getDrawerItems().size());
+            } else {
+                categoryName.setError(getApplicationContext().getString(R.string.error_category));
+            }
         }
     };
     private AccountHeader header = null;
