@@ -16,6 +16,8 @@
         <item name="colorButtonNormal">@color/lightAccent</item>
 
         <item name="cardStyle">@style/CardViewStyle.Light</item>
+
+        <item name="drawable_add">@drawable/ic_action_add_dark</item>
     </style>
 
     <style name="AppTheme.Dark" parent="MaterialDrawerTheme.ActionBar">
@@ -30,6 +32,8 @@
         <item name="android:buttonStyle">@style/DarkButton</item>
 
         <item name="cardStyle">@style/CardViewStyle.Dark</item>
+
+        <item name="drawable_add">@drawable/ic_action_add</item>
     </style>
 
     <!-- ActionBar Style -->
