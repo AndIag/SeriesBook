@@ -38,6 +38,8 @@ public class MainActivity extends BaseActivity {
     private static final long NAV_ADD_CATEGORY = 5;
     private static final long NAV_SETTINGS_IDENTIFIER = 10;
     private static final long NAV_ABOUT_IDENTIFIER = 11;
+    private List<Category> categoryList;
+    private Drawer drawer = null;
     private final Drawer.OnDrawerItemClickListener drawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
         @Override
         public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -57,6 +59,12 @@ public class MainActivity extends BaseActivity {
 
                                 Category category = new Category();
                                 category.setName(categoryName.getText().toString());
+
+                                category = DAO.getInstance(getApplicationContext()).addCategory(category);
+                                categoryList.add(category);
+                                drawer.addItemAtPosition(new PrimaryDrawerItem().withName(category.getName()).withIcon(android.R.drawable.ic_media_play), drawer.getDrawerItems().size());
+                            } else {
+                                categoryName.setError(getApplicationContext().getString(R.string.error_category));
                             }
 
                         }
@@ -78,8 +86,6 @@ public class MainActivity extends BaseActivity {
             return false;
         }
     };
-    private List<Category> categoryList;
-    private Drawer drawer = null;
     private AccountHeader header = null;
 
     //region Creating Navigation Drawer

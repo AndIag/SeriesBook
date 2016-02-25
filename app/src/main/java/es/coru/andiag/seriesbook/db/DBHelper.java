@@ -27,16 +27,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 + CATEGORY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + CATEGORY_NAME + " TEXT NOT NULL UNIQUE, "
                 + CATEGORY_COLOR + " INTEGER)");
-
-        sqLiteDatabase.execSQL("INSERT INTO " + CATEGORY_TABLE + " ( "
-                + CATEGORY_NAME + " , " + CATEGORY_COLOR + " )"
-                + " VALUES " + "('Following',3)");
-        sqLiteDatabase.execSQL("INSERT INTO " + CATEGORY_TABLE + " ( "
-                + CATEGORY_NAME + " , " + CATEGORY_COLOR + " )"
-                + " VALUES " + "('Favourites',3)");
-        sqLiteDatabase.execSQL("INSERT INTO " + CATEGORY_TABLE + " ( "
-                + CATEGORY_NAME + " , " + CATEGORY_COLOR + " )"
-                + " VALUES " + "('Viewed',3)");
     }
 
     @Override
