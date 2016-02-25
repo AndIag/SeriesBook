@@ -66,4 +66,11 @@ public class DAO {
         return category;
     }
 
+    public boolean removeCategory(String categoryName) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String delete = DBHelper.CATEGORY_NAME + "='" + categoryName + "'";
+
+        return (db.delete(DBHelper.CATEGORY_TABLE, delete, null)) > 0;
+    }
 }

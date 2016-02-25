@@ -65,6 +65,7 @@ public class MainActivity extends BaseActivity {
     };
     private List<Category> categoryList;
     private Drawer drawer = null;
+    //region Listeners and Callbacks
     private final MaterialDialog.SingleButtonCallback addCategoryDialogCallback = new MaterialDialog.SingleButtonCallback() {
         @Override
         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -86,7 +87,19 @@ public class MainActivity extends BaseActivity {
             }
         }
     };
+    private final Drawer.OnDrawerItemLongClickListener drawerItemLongClickListener = new Drawer.OnDrawerItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(View view, int position, IDrawerItem drawerItem) {
+            String categoryName = ((PrimaryDrawerItem) drawerItem).getName().getText();
+            if (DAO.getInstance(getApplicationContext()).removeCategory(categoryName)) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.removing_category) + " : " + categoryName, Toast.LENGTH_SHORT).show();
+                drawer.removeItemByPosition(drawer.getPosition(drawerItem));
+            }
+            return true;
+        }
+    };
     private AccountHeader header = null;
+    //endregion
 
     //region Creating Navigation Drawer
     private void createNavigationDrawer(Toolbar toolbar, Bundle savedInstanceState) {
@@ -96,6 +109,7 @@ public class MainActivity extends BaseActivity {
                 .withAccountHeader(header)
                 .withSavedInstance(savedInstanceState)
                 .withOnDrawerItemClickListener(drawerItemClickListener)
+                .withOnDrawerItemLongClickListener(drawerItemLongClickListener)
                 .addStickyDrawerItems(
                         new SecondaryDrawerItem()
                                 .withName(R.string.action_settings)
