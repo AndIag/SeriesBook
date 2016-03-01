@@ -1,5 +1,7 @@
 package es.coru.andiag.seriesbook.adapter;
 
+import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -9,6 +11,10 @@ import android.view.ViewGroup;
 public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final static String TAG = "SeriesAdapter";
+
+    public SeriesAdapter(Context context, Fragment fragment) {
+
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
