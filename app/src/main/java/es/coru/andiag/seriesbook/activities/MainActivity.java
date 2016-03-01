@@ -1,19 +1,30 @@
 package es.coru.andiag.seriesbook.activities;
 
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import java.util.List;
 
@@ -22,25 +33,128 @@ import es.coru.andiag.seriesbook.db.DAO;
 import es.coru.andiag.seriesbook.entities.Category;
 import es.coru.andiag.seriesbook.fragments.SettingsFragment;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity {
 
+
+    private static final long NAV_ADD_CATEGORY = 5;
+    private static final long NAV_SETTINGS_IDENTIFIER = 10;
+    private static final long NAV_ABOUT_IDENTIFIER = 11;
     private List<Category> categoryList;
+    private Drawer drawer = null;
+    //region Listeners and Callbacks
+    private final MaterialDialog.SingleButtonCallback addCategoryDialogCallback = new MaterialDialog.SingleButtonCallback() {
+        @Override
+        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+            EditText categoryName = (EditText) dialog.getView().findViewById(R.id.categoryNameText);
+            boolean a = !categoryName.getText().toString().matches("");
+            if (a) {
+                Toast.makeText(getApplicationContext(),
+                        getResources().getString(R.string.creating_category) + " : " + categoryName.getText().toString(),
+                        Toast.LENGTH_SHORT).show();
 
-    private void loadNavigationDrawer(Toolbar toolbar) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        ListView list = (ListView) navigationView.findViewById(R.id.drawer_list);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+                Category category = new Category();
+                category.setName(categoryName.getText().toString());
 
-        //Add categories to nav_drawer
-        String[] items = {"2", getResources().getString(R.string.add_category)};
-        ListAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
-        list.setAdapter(adapter);
+                category = DAO.getInstance(getApplicationContext()).addCategory(category);
+                categoryList.add(category);
+                drawer.addItemAtPosition(new PrimaryDrawerItem().withName(category.getName()).withIcon(android.R.drawable.ic_media_play), drawer.getDrawerItems().size());
+                dialog.dismiss();
+            } else {
+                TextInputLayout inputLayout = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_category);
+                inputLayout.setError(getApplicationContext().getString(R.string.error_category));
+            }
+        }
+    };
+    private final Drawer.OnDrawerItemClickListener drawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
+        @Override
+        public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+            long identifier = drawerItem.getIdentifier();
+            if (identifier == NAV_ADD_CATEGORY) {
+                Log.d(TAG, "Adding category");
+                generateMaterialDialog(R.string.creating_category, R.layout.dialog_add_category, R.string.create, addCategoryDialogCallback);
+                return true;
+            }
+            if (identifier == NAV_SETTINGS_IDENTIFIER) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.frame_container, new SettingsFragment())
+                        .commit();
+                return false;
+            }
+            if (identifier == NAV_ABOUT_IDENTIFIER) {
+                //Implement dialog about here
+                return false;
+            }
+            //Categories fragment behavior
+            return false;
+        }
+    };
+    private final Drawer.OnDrawerItemLongClickListener drawerItemLongClickListener = new Drawer.OnDrawerItemLongClickListener() {
+        @Override
+        public boolean onItemLongClick(View view, int position, IDrawerItem drawerItem) {
+            String categoryName = ((PrimaryDrawerItem) drawerItem).getName().getText();
+            if (DAO.getInstance(getApplicationContext()).removeCategory(categoryName)) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.removing_category) + " : " + categoryName, Toast.LENGTH_SHORT).show();
+                drawer.removeItemByPosition(drawer.getPosition(drawerItem));
+            }
+            return true;
+        }
+    };
+    private AccountHeader header = null;
+    //endregion
 
-        navigationView.setNavigationItemSelectedListener(this);
+    //region Creating Navigation Drawer
+    private void createNavigationDrawer(Toolbar toolbar, Bundle savedInstanceState) {
+        DrawerBuilder builder = new DrawerBuilder(this).withToolbar(toolbar)
+                .withDisplayBelowStatusBar(false)
+                .withActionBarDrawerToggleAnimated(true)
+                .withAccountHeader(header)
+                .withSavedInstance(savedInstanceState)
+                .withOnDrawerItemClickListener(drawerItemClickListener)
+                .withOnDrawerItemLongClickListener(drawerItemLongClickListener)
+                .addStickyDrawerItems(
+                        new SecondaryDrawerItem()
+                                .withName(R.string.action_settings)
+                                .withIcon(android.R.drawable.ic_menu_manage)
+                                .withIdentifier(NAV_SETTINGS_IDENTIFIER),
+                        new SecondaryDrawerItem()
+                                .withName(R.string.action_about)
+                                .withIdentifier(NAV_ABOUT_IDENTIFIER)
+                                .withIcon(android.R.drawable.ic_menu_manage)
+                );
+
+        for (Category c : categoryList) {
+            builder.addDrawerItems(new PrimaryDrawerItem().withName(c.getName()).withIcon(android.R.drawable.ic_media_play));
+        }
+
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.drawable_add, typedValue, true);
+
+        builder.addDrawerItems(new PrimaryDrawerItem()
+                .withName(getString(R.string.add_category))
+                .withIdentifier(NAV_ADD_CATEGORY)
+                .withIcon(typedValue.resourceId)
+                .withSelectable(false));
+
+        drawer = builder.build();
+
     }
+    private void buildHeader() {
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorPrimaryDark, typedValue, true);
+        int color = typedValue.data;
+        ColorDrawable drawable = new ColorDrawable();
+        drawable.setColor(color);
+
+        header = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(drawable)
+                .addProfiles(
+                        new ProfileDrawerItem().withName("AndIag").withEmail("andiag.dev@gmail.com").withIcon(R.drawable.andiag)
+                )
+                .build();
+
+    }
+    //endregion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,18 +174,25 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
 
-        loadNavigationDrawer(toolbar);
+        buildHeader();
+        createNavigationDrawer(toolbar, savedInstanceState);
 
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawer != null && drawer.isDrawerOpen()) {
+            drawer.closeDrawer();
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //add the values which need to be saved from the drawer to the bundle
+        outState = drawer.saveInstanceState(outState);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -91,23 +212,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (id) {
             case R.id.action_settings:
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_container, new SettingsFragment())
+                        .replace(R.id.frame_container, new SettingsFragment())
                         .commit();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        return true;
-    }
-
-    public void closeDrawerLayout() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-    }
-
 }

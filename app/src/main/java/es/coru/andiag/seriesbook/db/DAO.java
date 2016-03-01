@@ -1,5 +1,6 @@
 package es.coru.andiag.seriesbook.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -53,4 +54,23 @@ public class DAO {
         return categories;
     }
 
+    public Category addCategory(Category category) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues c = new ContentValues();
+        c.put(DBHelper.CATEGORY_NAME, category.getName());
+        c.put(DBHelper.CATEGORY_COLOR, category.getColor());
+
+        long id = db.insert(DBHelper.CATEGORY_TABLE, null, c);
+        category.setId(id);
+        return category;
+    }
+
+    public boolean removeCategory(String categoryName) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String delete = DBHelper.CATEGORY_NAME + "='" + categoryName + "'";
+
+        return (db.delete(DBHelper.CATEGORY_TABLE, delete, null)) > 0;
+    }
 }
