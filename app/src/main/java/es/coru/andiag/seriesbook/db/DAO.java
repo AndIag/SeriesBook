@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.coru.andiag.seriesbook.entities.Category;
+import es.coru.andiag.seriesbook.entities.Serie;
 
 /**
  * Created by iagoc on 20/02/2016.
@@ -32,6 +33,7 @@ public class DAO {
         return ourInstance;
     }
 
+    //region Categories
     public List<Category> getCategories() {
         List<Category> categories = new ArrayList<>();
         Category category;
@@ -73,4 +75,47 @@ public class DAO {
 
         return (db.delete(DBHelper.CATEGORY_TABLE, delete, null)) > 0;
     }
+    //endregion
+
+    //region Series
+    public List<Serie> getSerieByCategory(Category category) {
+        List<Serie> series = new ArrayList<>();
+        Serie serie;
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String execute = "SELECT * FROM " + DBHelper.SERIE_TABLE + " WHERE " + DBHelper.SERIE_CATEGORY + " = " + category.getId() + " ORDER BY " + DBHelper.SERIE_NAME;
+        Cursor cursor = db.rawQuery(execute, null);
+
+        while (cursor != null && cursor.moveToNext()) {
+            serie = new Serie();
+            serie.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.SERIE_ID)));
+            serie.setName(cursor.getString(cursor.getColumnIndex(DBHelper.SERIE_NAME)));
+            serie.setCategory(category);
+            serie.setChapter(cursor.getInt(cursor.getColumnIndex(DBHelper.SERIE_CHAPTER)));
+            serie.setSeason(cursor.getInt(cursor.getColumnIndex(DBHelper.SERIE_SEASON)));
+            serie.setImageUrl(cursor.getString(cursor.getColumnIndex(DBHelper.SERIE_IMAGE)));
+            series.add(serie);
+        }
+        if (cursor != null) cursor.close();
+        db.close();
+
+        return series;
+    }
+
+    public Serie addSerie(Serie serie) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues s = new ContentValues();
+        s.put(DBHelper.SERIE_NAME, serie.getName());
+        s.put(DBHelper.SERIE_CATEGORY, serie.getCategory().getId());
+        s.put(DBHelper.SERIE_CHAPTER, serie.getChapter());
+        s.put(DBHelper.SERIE_SEASON, serie.getSeason());
+        s.put(DBHelper.SERIE_IMAGE, serie.getImageUrl());
+
+        long id = db.insert(DBHelper.SERIE_TABLE, null, s);
+        serie.setId(id);
+        return serie;
+    }
+    //endregion
 }
