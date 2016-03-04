@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -77,6 +78,7 @@ public class MainActivity extends BaseActivity {
             }
             if (identifier == NAV_SETTINGS_IDENTIFIER) {
                 getSupportFragmentManager().beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
                         .replace(R.id.frame_container, new SettingsFragment())
                         .commit();
                 return false;
@@ -87,6 +89,7 @@ public class MainActivity extends BaseActivity {
             }
             //Categories fragment behavior
             getSupportFragmentManager().beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
                     .replace(R.id.frame_container, SeriesListFragment.newInstance(categoryList.get(position - 1)))
                     .commit();
             return false;
@@ -215,6 +218,7 @@ public class MainActivity extends BaseActivity {
         switch (id) {
             case R.id.action_settings:
                 getSupportFragmentManager().beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE )
                         .replace(R.id.frame_container, new SettingsFragment())
                         .commit();
                 return true;
