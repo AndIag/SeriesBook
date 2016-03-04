@@ -21,6 +21,7 @@ public class BaseActivity extends AppCompatActivity {
 
     public final static int THEME_LIGHT = 0;
     public final static int THEME_DARK = 1;
+    public final static int THEME_GREEN = 2;
 
     public static int getTheme(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -67,6 +68,14 @@ public class BaseActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                 getWindow().setStatusBarColor(getResources().getColor(R.color.lightPrimaryDark));
+            }
+            return;
+        }
+        if (getTheme(getApplicationContext()) == THEME_GREEN) {
+            setTheme(R.style.AppTheme_Green);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                getWindow().setStatusBarColor(getResources().getColor(R.color.greenPrimaryDark));
             }
             return;
         }

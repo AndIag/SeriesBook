@@ -36,6 +36,22 @@
         <item name="drawable_add">@drawable/ic_action_add</item>
     </style>
 
+    <style name="AppTheme.Green" parent="MaterialDrawerTheme.ActionBar">
+        <item name="colorPrimary">@color/greenPrimary</item>
+        <item name="colorPrimaryDark">@color/greenPrimaryDark</item>
+        <item name="colorAccent">@color/greenAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <item name="backgroundColor">@color/greenBackground</item>
+
+        <item name="android:buttonStyle">@style/DarkButton</item>
+
+        <item name="cardStyle">@style/CardViewStyle.Dark</item>
+
+        <item name="drawable_add">@drawable/ic_action_add</item>
+    </style>
+
     <!-- ActionBar Style -->
     <style name="AppTheme.Base.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
     <style name="AppTheme.Base.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
@@ -56,9 +72,9 @@
     <attr name="cardStyle" format="reference" />
 
     <style name="CardViewStyle" parent="CardView">
-        <item name="cardCornerRadius">8dp</item>
-        <item name="cardElevation">4dp</item>
-        <item name="contentPadding">1dp</item>
+        <item name="cardCornerRadius">4dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="contentPadding">0dp</item>
         <item name="cardUseCompatPadding">true</item>
     </style>
 

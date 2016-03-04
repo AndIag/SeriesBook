@@ -7,10 +7,12 @@
     <string-array name="pref_theme_list_titles">
         <item>Light</item>
         <item>Dark</item>
+        <item>Green</item>
     </string-array>
     <string-array name="pref_theme_list_values">
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
 
     <string name="action_settings">Settings</string>
@@ -22,4 +24,6 @@
     <string name="cancel">Cancel</string>
     <string name="error_category">Required name!</string>
     <string name="removing_category">Removing Category</string>
+    <string name="season">Season</string>
+    <string name="chapter">Episode</string>
 </resources>

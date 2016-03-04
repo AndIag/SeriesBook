@@ -13,34 +13,35 @@
 
 
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="90dp"
-            android:layout_height="125dp"
+            android:id="@+id/imagePoster"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:scaleType="fitStart"
+            android:scaleType="fitXY"
             android:src="@drawable/no_poster" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/textTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_margin="16dp"
-            android:layout_toRightOf="@+id/imageView"
+            android:layout_toRightOf="@+id/imagePoster"
             android:text="The Walking Dead"
             android:textAlignment="center"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?attr/colorAccent" />
 
         <com.vi.swipenumberpicker.SwipeNumberPicker
             android:id="@+id/picker_season"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/textView"
-            android:layout_alignRight="@+id/textView"
+            android:layout_alignEnd="@+id/textTitle"
+            android:layout_alignRight="@+id/textTitle"
             android:layout_alignTop="@+id/picker_chapter"
             app:snp_arrowColor="@android:color/white"
             app:snp_backgroundColor="?attr/colorAccent"
@@ -52,15 +53,41 @@
             android:id="@+id/picker_chapter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/imageView"
-            android:layout_alignLeft="@+id/textView"
-            android:layout_alignStart="@+id/textView"
+            android:layout_alignBottom="@+id/imagePoster"
+            android:layout_alignLeft="@+id/textTitle"
+            android:layout_alignStart="@+id/textTitle"
             android:layout_marginBottom="16dp"
             app:snp_arrowColor="@android:color/white"
             app:snp_backgroundColor="?attr/colorAccent"
             app:snp_max="1000"
             app:snp_min="0"
             app:snp_numberColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/picker_chapter"
+            android:layout_alignEnd="@+id/picker_chapter"
+            android:layout_alignLeft="@+id/picker_chapter"
+            android:layout_alignRight="@+id/picker_chapter"
+            android:layout_alignStart="@+id/picker_chapter"
+            android:text="@string/season"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/picker_season"
+            android:layout_alignLeft="@+id/picker_season"
+            android:layout_alignRight="@+id/picker_season"
+            android:layout_alignStart="@+id/picker_season"
+            android:layout_alignTop="@+id/textView2"
+            android:text="@string/chapter"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </RelativeLayout>
 
