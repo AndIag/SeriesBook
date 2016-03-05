@@ -158,8 +158,7 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
         ImageButton imageButton = (ImageButton) rootView.findViewById(R.id.add_button);
         imageButton.setOnClickListener(this);
 
-        adapter.updateSeries(getTestSeries());
-        //adapter.notifyDataSetChanged();
+        adapter.updateSeries(DAO.getInstance(getActivity()).getSerieByCategory(category));
         slideAdapter.notifyDataSetChanged();
 
         return rootView;
@@ -167,7 +166,11 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        mainActivity.generateMaterialDialog(R.string.creating_serie, R.layout.dialog_add_serie, R.string.create, addSerieDialogCallback);
-        //Toast.makeText(mainActivity,"Crear Serie",Toast.LENGTH_SHORT).show();
+        List<Category> categoryList = mainActivity.getCategoryList();
+        ArrayList<String> categoryNames = new ArrayList<>();
+        for (Category c : categoryList) {
+            categoryNames.add(c.getName());
+        }
+        mainActivity.generateMaterialDialogWithSpinner(R.string.creating_serie, R.layout.dialog_add_serie, R.string.create, addSerieDialogCallback, categoryNames);
     }
 }
