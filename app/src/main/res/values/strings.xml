@@ -24,6 +24,7 @@
     <string name="cancel">Cancel</string>
     <string name="error_category">Required name!</string>
     <string name="removing_category">Removing Category</string>
+    <string name="removing_serie">Removing Serie</string>
     <string name="season">Season</string>
     <string name="chapter">Episode</string>
     <string name="add_serie">Add Category</string>

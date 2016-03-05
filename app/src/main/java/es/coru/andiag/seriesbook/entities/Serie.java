@@ -10,9 +10,9 @@ public class Serie implements Serializable {
     private long id;
     private Category category;
     private String name;
-    private Integer season;
+    private int season = -1;
     private int chapter;
-    private String imageUrl;
+    private String imageUrl = null;
 
     public long getId() {
         return id;
@@ -38,11 +38,11 @@ public class Serie implements Serializable {
         this.name = name;
     }
 
-    public Integer getSeason() {
+    public int getSeason() {
         return season;
     }
 
-    public void setSeason(Integer season) {
+    public void setSeason(int season) {
         this.season = season;
     }
 

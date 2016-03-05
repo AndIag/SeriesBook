@@ -19,9 +19,6 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import es.coru.andiag.seriesbook.R;
 import es.coru.andiag.seriesbook.activities.MainActivity;
 import es.coru.andiag.seriesbook.adapter.SeriesAdapter;
@@ -37,6 +34,7 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
 
     private final static String TAG = "SeriesListFragment";
     private final static String ARG_CATEGORY = "category";
+    private final static String ARG_SERIES = "series";
     private static MainActivity mainActivity;
 
     private SeriesAdapter adapter;
@@ -113,36 +111,6 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
 
     }
 
-    private List<Serie> getTestSeries() {
-        List<Serie> series = new ArrayList<>();
-        Serie s1 = new Serie();
-        s1.setName("Shameless");
-        series.add(s1);
-        Serie s2 = new Serie();
-        s2.setName("SKINS");
-        s2.setSeason(1);
-        series.add(s2);
-        Serie s3 = new Serie();
-        s3.setName("The Walking Dead");
-        s3.setImageUrl("url");
-        series.add(s3);
-        Serie s4 = new Serie();
-        s4.setName("The Big Bang Theory");
-        s4.setSeason(4);
-        s4.setImageUrl("url");
-        series.add(s4);
-
-        for (int i = 0; i < 10; i++) {
-            Serie s = new Serie();
-            s.setName("Serie " + i);
-            s.setSeason(i);
-            s.setImageUrl("url " + i);
-            series.add(s);
-        }
-
-        return series;
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -166,11 +134,6 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        List<Category> categoryList = mainActivity.getCategoryList();
-        ArrayList<String> categoryNames = new ArrayList<>();
-        for (Category c : categoryList) {
-            categoryNames.add(c.getName());
-        }
-        mainActivity.generateMaterialDialogWithSpinner(R.string.creating_serie, R.layout.dialog_add_serie, R.string.create, addSerieDialogCallback, categoryNames);
+        mainActivity.generateMaterialDialog(R.string.creating_serie, R.layout.dialog_add_serie, R.string.create, addSerieDialogCallback);
     }
 }

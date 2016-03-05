@@ -2,12 +2,14 @@ package es.coru.andiag.seriesbook.adapter;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.vi.swipenumberpicker.SwipeNumberPicker;
 
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.coru.andiag.seriesbook.R;
+import es.coru.andiag.seriesbook.db.DAO;
 import es.coru.andiag.seriesbook.entities.Serie;
 
 /**
@@ -60,16 +63,21 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         addSerie(serie, 0);
     }
 
+    public void removeSerie(int position) {
+        seriesList.remove(position);
+        notifyItemRemoved(position);
+    }
+
     @Override
     public int getItemViewType(int position) {
         Serie serie = getItem(position);
-        if (serie.getImageUrl() == null && serie.getSeason() == null) {
+        if ((serie.getImageUrl() == null || serie.getImageUrl().equals("")) && serie.getSeason() == -1) {
             return NO_SEASON_IMAGE_ITEM;
         }
-        if (serie.getImageUrl() == null) {
+        if (serie.getImageUrl() == null || serie.getImageUrl().equals("")) {
             return NO_IMAGE_ITEM;
         }
-        if (serie.getSeason() == null) {
+        if (serie.getSeason() == -1) {
             return NO_SEASON_ITEM;
         }
         return COMPLETE_ITEM;
@@ -77,9 +85,10 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).
-                inflate(R.layout.item_serie_chap_noimg, parent, false);
+        View itemView = null;
         if (viewType == NO_SEASON_IMAGE_ITEM) {
+            itemView = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.item_serie_chap_noimg, parent, false);
             return new NoSeasonImageSerieItem(itemView);
         }
         if (viewType == NO_IMAGE_ITEM) {
@@ -97,19 +106,30 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     inflate(R.layout.item_serie_s_chap_img, parent, false);
             return new CompleteSerieItem(itemView);
         }
+
         //By default we return the simplest layout
-        return new NoSeasonImageSerieItem(itemView);
+        return new NoSeasonImageSerieItem(LayoutInflater.from(parent.getContext()).
+                inflate(R.layout.item_serie_chap_noimg, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Serie serie = getItem(position);
 
+        ((NoSeasonImageSerieItem) holder).position = position;
         ((NoSeasonImageSerieItem) holder).textTitle.setText(serie.getName());
         ((NoSeasonImageSerieItem) holder).chapterPicker.setValue(serie.getChapter(), false);
 
-        //Seguir aqui
-
+        if (holder instanceof NoImageSerieItem) {
+            ((NoImageSerieItem) holder).seasonPicker.setText(serie.getSeason());
+        }
+        if (holder instanceof NoSeasonSearieItem) {
+            //Añadir la carga de la imagen con volley
+        }
+        if (holder instanceof CompleteSerieItem) {
+            ((CompleteSerieItem) holder).seasonPicker.setText(serie.getChapter());
+            //Añadir la carga de la imagen con volley
+        }
     }
 
     @Override
@@ -123,17 +143,28 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     //region ViewHolders
     class NoSeasonImageSerieItem extends RecyclerView.ViewHolder {
+        CardView cardView;
         TextView textTitle;
         SwipeNumberPicker chapterPicker;
         View v;
-
-        //Add CardView if we want to set onClickAction
+        int position;
 
         public NoSeasonImageSerieItem(View itemView) {
             super(itemView);
             this.v = itemView;
             textTitle = (TextView) v.findViewById(R.id.textTitle);
             chapterPicker = (SwipeNumberPicker) v.findViewById(R.id.picker_chapter);
+            cardView = (CardView) v.findViewById(R.id.card_view);
+            cardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (DAO.getInstance(context).removeSerie(getItem(position).getId())) {
+                        Toast.makeText(context, context.getResources().getString(R.string.removing_serie), Toast.LENGTH_SHORT).show();
+                        removeSerie(position);
+                    }
+                    return false;
+                }
+            });
         }
     }
 

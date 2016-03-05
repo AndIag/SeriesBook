@@ -84,7 +84,12 @@ public class DAO {
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String execute = "SELECT * FROM " + DBHelper.SERIE_TABLE + " WHERE " + DBHelper.SERIE_CATEGORY + " = " + category.getId() + " ORDER BY " + DBHelper.SERIE_NAME;
+        String execute = "SELECT " + DBHelper.SERIE_ID + ", "
+                + DBHelper.SERIE_NAME + ", " + DBHelper.SERIE_CHAPTER + ", "
+                + "COALESCE(" + DBHelper.SERIE_SEASON + ", -1) AS " + DBHelper.SERIE_SEASON + ", "
+                + DBHelper.SERIE_IMAGE
+                + " FROM " + DBHelper.SERIE_TABLE
+                + " WHERE " + DBHelper.SERIE_CATEGORY + " = " + category.getId() + " ORDER BY " + DBHelper.SERIE_NAME;
         Cursor cursor = db.rawQuery(execute, null);
 
         while (cursor != null && cursor.moveToNext()) {
@@ -117,5 +122,14 @@ public class DAO {
         serie.setId(id);
         return serie;
     }
+
+    public boolean removeSerie(long serieId) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String delete = DBHelper.SERIE_ID + "='" + serieId + "'";
+
+        return (db.delete(DBHelper.SERIE_TABLE, delete, null)) > 0;
+    }
+
     //endregion
 }
