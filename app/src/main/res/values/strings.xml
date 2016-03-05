@@ -27,4 +27,6 @@
     <string name="season">Season</string>
     <string name="chapter">Episode</string>
     <string name="add_serie">Add Category</string>
+    <string name="serie">Serie</string>
+    <string name="creating_serie">Creating serie</string>
 </resources>

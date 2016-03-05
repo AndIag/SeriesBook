@@ -3,8 +3,6 @@ package es.coru.andiag.seriesbook.activities;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
@@ -42,6 +40,34 @@ public class MainActivity extends BaseActivity {
     private static final long NAV_SETTINGS_IDENTIFIER = 10;
     private static final long NAV_ABOUT_IDENTIFIER = 11;
     private List<Category> categoryList;
+    private final Drawer.OnDrawerItemClickListener drawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
+        @Override
+        public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+            long identifier = drawerItem.getIdentifier();
+            if (identifier == NAV_ADD_CATEGORY) {
+                Log.d(TAG, "Adding category");
+                generateMaterialDialog(R.string.creating_category, R.layout.dialog_add_category, R.string.create, addCategoryDialogCallback);
+                return true;
+            }
+            if (identifier == NAV_SETTINGS_IDENTIFIER) {
+                getSupportFragmentManager().beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .replace(R.id.frame_container, new SettingsFragment())
+                        .commit();
+                return false;
+            }
+            if (identifier == NAV_ABOUT_IDENTIFIER) {
+                //Implement dialog about here
+                return false;
+            }
+            //Categories fragment behavior
+            getSupportFragmentManager().beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .replace(R.id.frame_container, SeriesListFragment.newInstance(categoryList.get(position - 1)))
+                    .commit();
+            return false;
+        }
+    };
     private Drawer drawer = null;
     //region Listeners and Callbacks
     private final MaterialDialog.SingleButtonCallback addCategoryDialogCallback = new MaterialDialog.SingleButtonCallback() {
@@ -65,34 +91,6 @@ public class MainActivity extends BaseActivity {
                 TextInputLayout inputLayout = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_category);
                 inputLayout.setError(getApplicationContext().getString(R.string.error_category));
             }
-        }
-    };
-    private final Drawer.OnDrawerItemClickListener drawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
-        @Override
-        public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-            long identifier = drawerItem.getIdentifier();
-            if (identifier == NAV_ADD_CATEGORY) {
-                Log.d(TAG, "Adding category");
-                generateMaterialDialog(R.string.creating_category, R.layout.dialog_add_category, R.string.create, addCategoryDialogCallback);
-                return true;
-            }
-            if (identifier == NAV_SETTINGS_IDENTIFIER) {
-                getSupportFragmentManager().beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
-                        .replace(R.id.frame_container, new SettingsFragment())
-                        .commit();
-                return false;
-            }
-            if (identifier == NAV_ABOUT_IDENTIFIER) {
-                //Implement dialog about here
-                return false;
-            }
-            //Categories fragment behavior
-            getSupportFragmentManager().beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN )
-                    .replace(R.id.frame_container, SeriesListFragment.newInstance(categoryList.get(position - 1)))
-                    .commit();
-            return false;
         }
     };
     private final Drawer.OnDrawerItemLongClickListener drawerItemLongClickListener = new Drawer.OnDrawerItemLongClickListener() {
@@ -171,7 +169,7 @@ public class MainActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         categoryList = DAO.getInstance(this).getCategories();
-
+        /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,6 +178,7 @@ public class MainActivity extends BaseActivity {
                         .setAction("Action", null).show();
             }
         });
+        */
 
         buildHeader();
         createNavigationDrawer(toolbar, savedInstanceState);

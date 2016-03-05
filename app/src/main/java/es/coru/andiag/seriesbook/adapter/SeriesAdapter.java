@@ -48,6 +48,16 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void updateSeries(List<Serie> series) {
         seriesList.clear();
         seriesList.addAll(series);
+        notifyDataSetChanged();
+    }
+
+    public void addSerie(Serie serie, int position) {
+        seriesList.add(position, serie);
+        notifyItemInserted(position);
+    }
+
+    public void addSerie(Serie serie) {
+        addSerie(serie, 0);
     }
 
     @Override
