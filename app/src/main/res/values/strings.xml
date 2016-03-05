@@ -26,4 +26,5 @@
     <string name="removing_category">Removing Category</string>
     <string name="season">Season</string>
     <string name="chapter">Episode</string>
+    <string name="add_serie">Add Category</string>
 </resources>
