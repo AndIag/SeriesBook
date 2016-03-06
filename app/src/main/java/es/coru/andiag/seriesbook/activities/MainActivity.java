@@ -40,6 +40,45 @@ public class MainActivity extends BaseActivity {
     private static final long NAV_SETTINGS_IDENTIFIER = 10;
     private static final long NAV_ABOUT_IDENTIFIER = 11;
     private List<Category> categoryList;
+
+    private final MaterialDialog.SingleButtonCallback addCategoryDialogCallback = new MaterialDialog.SingleButtonCallback() {
+        @Override
+        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+            EditText categoryName = (EditText) dialog.getView().findViewById(R.id.categoryNameText);
+            boolean a = !categoryName.getText().toString().matches("");
+            if (a) {
+                Category category = new Category();
+                category.setName(categoryName.getText().toString());
+
+                category = DAO.getInstance(getApplicationContext()).addCategory(category);
+                if (category != null) { //Check if the category was added jet (Duplicated)
+                    Toast.makeText(getApplicationContext(),
+                            getResources().getString(R.string.creating_category) + " : " + categoryName.getText().toString(),
+                            Toast.LENGTH_SHORT).show();
+
+                    categoryList.add(category);
+                    drawer.addItemAtPosition(new PrimaryDrawerItem().withName(category.getName()).withIcon(android.R.drawable.ic_media_play), drawer.getDrawerItems().size());
+
+                    getSupportFragmentManager().beginTransaction()
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            .replace(R.id.frame_container, SeriesListFragment.newInstance(category))
+                            .commit();
+
+                    drawer.setSelectionAtPosition(drawer.getDrawerItems().size() - 1);
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            getResources().getString(R.string.creating_category_duplicate_error),
+                            Toast.LENGTH_SHORT).show();
+                }
+                dialog.dismiss();
+
+            } else {
+                TextInputLayout inputLayout = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_category);
+                inputLayout.setError(getApplicationContext().getString(R.string.error_category));
+            }
+        }
+    };
+    private Drawer drawer = null;
     private final Drawer.OnDrawerItemClickListener drawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
         @Override
         public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -68,24 +107,37 @@ public class MainActivity extends BaseActivity {
             return false;
         }
     };
-    private Drawer drawer = null;
     private final MaterialDialog.SingleButtonCallback addCategoryDialogCallback = new MaterialDialog.SingleButtonCallback() {
         @Override
         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
             EditText categoryName = (EditText) dialog.getView().findViewById(R.id.categoryNameText);
             boolean a = !categoryName.getText().toString().matches("");
             if (a) {
-                Toast.makeText(getApplicationContext(),
-                        getResources().getString(R.string.creating_category) + " : " + categoryName.getText().toString(),
-                        Toast.LENGTH_SHORT).show();
-
                 Category category = new Category();
                 category.setName(categoryName.getText().toString());
 
                 category = DAO.getInstance(getApplicationContext()).addCategory(category);
-                categoryList.add(category);
-                drawer.addItemAtPosition(new PrimaryDrawerItem().withName(category.getName()).withIcon(android.R.drawable.ic_media_play), drawer.getDrawerItems().size());
+                if (category != null) { //Check if the category was added jet (Duplicated)
+                    Toast.makeText(getApplicationContext(),
+                            getResources().getString(R.string.creating_category) + " : " + categoryName.getText().toString(),
+                            Toast.LENGTH_SHORT).show();
+
+                    categoryList.add(category);
+                    drawer.addItemAtPosition(new PrimaryDrawerItem().withName(category.getName()).withIcon(android.R.drawable.ic_media_play), drawer.getDrawerItems().size());
+
+                    getSupportFragmentManager().beginTransaction()
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                            .replace(R.id.frame_container, SeriesListFragment.newInstance(category))
+                            .commit();
+
+                    drawer.setSelectionAtPosition(drawer.getDrawerItems().size() - 1);
+                } else {
+                    Toast.makeText(getApplicationContext(),
+                            getResources().getString(R.string.creating_category_duplicate_error),
+                            Toast.LENGTH_SHORT).show();
+                }
                 dialog.dismiss();
+
             } else {
                 TextInputLayout inputLayout = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_category);
                 inputLayout.setError(getApplicationContext().getString(R.string.error_category));
@@ -170,6 +222,14 @@ public class MainActivity extends BaseActivity {
 
         buildHeader();
         createNavigationDrawer(toolbar, savedInstanceState);
+
+        if (categoryList.size() > 0) {
+            getSupportFragmentManager().beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .replace(R.id.frame_container, SeriesListFragment.newInstance(categoryList.get(0)))
+                    .commit();
+        }
+
     }
 
     @Override

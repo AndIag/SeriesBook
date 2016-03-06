@@ -20,10 +20,12 @@
     <string name="creating_category">Creating Category</string>
     <string name="category_name">Category name</string>
     <string name="removing_category">Removing Category</string>
+    <string name="creating_category_duplicate_error">Duplicated Category Name</string>
 
     <!-- Serie -->
     <string name="removing_serie">Removing Serie</string>
     <string name="creating_serie">Creating serie</string>
+    <string name="creating_serie_duplicate_error">Duplicated Serie Name</string>
 
     <!-- Dialogs -->
     <string name="create">Create</string>

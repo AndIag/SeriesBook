@@ -50,10 +50,6 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
 
             boolean a = !serieName.getText().toString().matches("");
             if (a) {
-                Toast.makeText(mainActivity,
-                        getResources().getString(R.string.creating_serie) + " : " + serieName.getText().toString(),
-                        Toast.LENGTH_SHORT).show();
-
                 Serie serie = new Serie();
                 serie.setName(serieName.getText().toString());
                 //Add chapter
@@ -74,9 +70,18 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
                 serie.setCategory(category);
 
                 serie = DAO.getInstance(mainActivity).addSerie(serie);
-                adapter.addSerie(serie);
-                slideAdapter.notifyItemInserted(0);
+                if (serie != null) {
+                    Toast.makeText(mainActivity,
+                            getResources().getString(R.string.creating_serie) + " : " + serieName.getText().toString(),
+                            Toast.LENGTH_SHORT).show();
 
+                    adapter.addSerie(serie);
+                    slideAdapter.notifyItemInserted(0);
+                } else {
+                    Toast.makeText(mainActivity,
+                            getResources().getString(R.string.creating_serie_duplicate_error),
+                            Toast.LENGTH_SHORT).show();
+                }
                 dialog.dismiss();
             } else {
                 TextInputLayout inputLayout = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_category);

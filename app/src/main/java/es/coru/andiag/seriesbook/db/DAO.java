@@ -59,6 +59,16 @@ public class DAO {
     public Category addCategory(Category category) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+        //Check if the category already exists
+        String checkup = "SELECT * FROM " + DBHelper.CATEGORY_TABLE + " WHERE " + DBHelper.CATEGORY_NAME + " = '" + category.getName() + "'";
+        Cursor cursor = db.rawQuery(checkup, null);
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            return null;
+        }
+        cursor.close();
+
+        //Insert category
         ContentValues c = new ContentValues();
         c.put(DBHelper.CATEGORY_NAME, category.getName());
         c.put(DBHelper.CATEGORY_COLOR, category.getColor());
@@ -110,6 +120,15 @@ public class DAO {
 
     public Serie addSerie(Serie serie) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        //Check if the serie already exists
+        String checkup = "SELECT * FROM " + DBHelper.SERIE_TABLE + " WHERE " + DBHelper.SERIE_NAME + " = '" + serie.getName() + "'";
+        Cursor cursor = db.rawQuery(checkup, null);
+        if (cursor.getCount() > 0) {
+            cursor.close();
+            return null;
+        }
+        cursor.close();
 
         ContentValues s = new ContentValues();
         s.put(DBHelper.SERIE_NAME, serie.getName());
