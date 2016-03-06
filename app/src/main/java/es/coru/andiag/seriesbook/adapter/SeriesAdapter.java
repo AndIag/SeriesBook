@@ -121,13 +121,13 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         ((NoSeasonImageSerieItem) holder).chapterPicker.setValue(serie.getChapter(), false);
 
         if (holder instanceof NoImageSerieItem) {
-            ((NoImageSerieItem) holder).seasonPicker.setText(serie.getSeason());
+            ((NoImageSerieItem) holder).seasonPicker.setValue(serie.getSeason(), false);
         }
         if (holder instanceof NoSeasonSearieItem) {
             //Añadir la carga de la imagen con volley
         }
         if (holder instanceof CompleteSerieItem) {
-            ((CompleteSerieItem) holder).seasonPicker.setText(serie.getChapter());
+            ((CompleteSerieItem) holder).seasonPicker.setValue(serie.getChapter(), false);
             //Añadir la carga de la imagen con volley
         }
     }

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -34,7 +35,6 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
 
     private final static String TAG = "SeriesListFragment";
     private final static String ARG_CATEGORY = "category";
-    private final static String ARG_SERIES = "series";
     private static MainActivity mainActivity;
 
     private SeriesAdapter adapter;
@@ -45,6 +45,9 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
         @Override
         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
             EditText serieName = (EditText) dialog.getView().findViewById(R.id.serieNameText);
+            EditText chapter = (EditText) dialog.getView().findViewById(R.id.chapter);
+            EditText season = (EditText) dialog.getView().findViewById(R.id.season);
+
             boolean a = !serieName.getText().toString().matches("");
             if (a) {
                 Toast.makeText(mainActivity,
@@ -53,6 +56,21 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
 
                 Serie serie = new Serie();
                 serie.setName(serieName.getText().toString());
+                //Add chapter
+                int numChapter = 0;
+                if (!chapter.getText().toString().equals("")) {
+                    numChapter = Integer.parseInt(chapter.getText().toString());
+                }
+                serie.setChapter(numChapter);
+                //If showed, add season
+                if (season.getVisibility() == View.VISIBLE) {
+                    int numSeason = 0;
+                    if (!season.getText().toString().equals("")) {
+                        numSeason = Integer.parseInt(season.getText().toString());
+                    }
+                    serie.setSeason(numSeason);
+                }
+                //Add category
                 serie.setCategory(category);
 
                 serie = DAO.getInstance(mainActivity).addSerie(serie);
@@ -134,6 +152,39 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        mainActivity.generateMaterialDialog(R.string.creating_serie, R.layout.dialog_add_serie, R.string.create, addSerieDialogCallback);
+        generateMaterialDialog(R.string.creating_serie, R.layout.dialog_add_serie, R.string.create, addSerieDialogCallback);
     }
+
+    public void generateMaterialDialog(int titleResource, int customView, int positiveTextResource, MaterialDialog.SingleButtonCallback positiveCallback) {
+        final MaterialDialog dialog = new MaterialDialog.Builder(mainActivity)
+                .title(titleResource)
+                .autoDismiss(false)
+                .positiveText(positiveTextResource)
+                .negativeText(R.string.cancel)
+                .customView(customView, true)
+                .onPositive(positiveCallback)
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+
+        final CheckBox checkBox = (CheckBox) dialog.findViewById(R.id.show_season_checkbox);
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkBox.isChecked()) {
+                    dialog.findViewById(R.id.season).setVisibility(View.VISIBLE);
+                    dialog.findViewById(R.id.text_season).setVisibility(View.VISIBLE);
+                } else {
+                    dialog.findViewById(R.id.season).setVisibility(View.GONE);
+                    dialog.findViewById(R.id.text_season).setVisibility(View.GONE);
+                }
+            }
+        });
+
+    }
+
 }

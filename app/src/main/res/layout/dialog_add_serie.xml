@@ -17,4 +17,59 @@
 
     </android.support.design.widget.TextInputLayout>
 
+    <CheckBox
+        android:id="@+id/show_season_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/input_layout_seriename"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/show_season_checkbox"
+        android:layout_below="@id/input_layout_seriename"
+        android:layout_toLeftOf="@id/show_season_checkbox"
+        android:layout_toStartOf="@id/show_season_checkbox"
+        android:text="@string/show_seasons" />
+
+    <TextView
+        android:id="@+id/text_chapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/show_season_checkbox"
+        android:text="@string/chapter" />
+
+    <EditText
+        android:id="@+id/chapter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/show_season_checkbox"
+        android:layout_toEndOf="@id/text_chapter"
+        android:layout_toRightOf="@id/text_chapter"
+        android:hint="0"
+        android:inputType="number" />
+
+    <TextView
+        android:id="@+id/text_season"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/chapter"
+        android:text="@string/season"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/season"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/chapter"
+        android:layout_toEndOf="@id/text_season"
+        android:layout_toRightOf="@id/text_season"
+        android:hint="0"
+        android:inputType="number"
+        android:visibility="gone" />
+
 </RelativeLayout>
