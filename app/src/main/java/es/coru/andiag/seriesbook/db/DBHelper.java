@@ -20,9 +20,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String CATEGORY_ID = "_id";
     public static final String CATEGORY_NAME = "name";
     public static final String CATEGORY_COLOR = "color"; //Color int value
+    public static final String DELETED = "deleted";
     private final static String TAG = "DBHelper";
     private static final String DATABASE_NAME = "sbai.sqlite";
-    private static final int VERSION = 3;
+    private static final int VERSION = 4;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);
@@ -33,7 +34,8 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("CREATE TABLE " + CATEGORY_TABLE + " ("
                 + CATEGORY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + CATEGORY_NAME + " TEXT NOT NULL UNIQUE, "
-                + CATEGORY_COLOR + " INTEGER)");
+                + CATEGORY_COLOR + " INTEGER, "
+                + DELETED + " INTEGER)");
 
         sqLiteDatabase.execSQL("CREATE TABLE " + SERIE_TABLE + "("
                 + SERIE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -42,6 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + SERIE_SEASON + " INTEGER, "
                 + SERIE_CHAPTER + " INTEGER NOT NULL, "
                 + SERIE_IMAGE + " TEXT, "
+                + DELETED + " INTEGER, "
                 + "FOREIGN KEY(" + SERIE_CATEGORY + ") REFERENCES " + CATEGORY_TABLE + "(" + CATEGORY_ID + "))");
     }
 

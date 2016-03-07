@@ -16,6 +16,8 @@ import es.coru.andiag.seriesbook.entities.Serie;
  */
 public class DAO {
 
+    private static final String IS_NOT_DELETED = DBHelper.DELETED + " = 0";
+    private static final String IS_DELETED = DBHelper.DELETED + " = 1";
     private static DAO ourInstance;
     private static DBHelper dbHelper;
 
@@ -34,13 +36,30 @@ public class DAO {
     }
 
     //region Categories
+    private Category getCategory(String categoryName) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String select = "SELECT * FROM " + DBHelper.CATEGORY_TABLE + " WHERE " + DBHelper.CATEGORY_NAME + " = '" + categoryName + "' AND " + IS_NOT_DELETED;
+        Cursor cursor = db.rawQuery(select, null);
+
+        Category category = null;
+        if (cursor != null) {
+            cursor.moveToFirst();
+            category = new Category();
+            category.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.CATEGORY_ID)));
+            category.setName(cursor.getString(cursor.getColumnIndex(DBHelper.CATEGORY_NAME)));
+            category.setColor(cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_COLOR)));
+            cursor.close();
+        }
+        return category;
+    }
+
     public List<Category> getCategories() {
         List<Category> categories = new ArrayList<>();
         Category category;
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        String execute = "SELECT * FROM " + DBHelper.CATEGORY_TABLE + " ORDER BY " + DBHelper.CATEGORY_NAME;
+        String execute = "SELECT * FROM " + DBHelper.CATEGORY_TABLE + " WHERE " + IS_NOT_DELETED + " ORDER BY " + DBHelper.CATEGORY_NAME;
         Cursor cursor = db.rawQuery(execute, null);
 
         while (cursor != null && cursor.moveToNext()) {
@@ -63,8 +82,7 @@ public class DAO {
         String checkup = "SELECT * FROM " + DBHelper.CATEGORY_TABLE + " WHERE " + DBHelper.CATEGORY_NAME + " = '" + category.getName() + "'";
         Cursor cursor = db.rawQuery(checkup, null);
         if (cursor.getCount() > 0) {
-            cursor.close();
-            return null;
+            return retrieveCategory(cursor, category);
         }
         cursor.close();
 
@@ -72,18 +90,60 @@ public class DAO {
         ContentValues c = new ContentValues();
         c.put(DBHelper.CATEGORY_NAME, category.getName());
         c.put(DBHelper.CATEGORY_COLOR, category.getColor());
+        c.put(DBHelper.DELETED, false);
 
         long id = db.insert(DBHelper.CATEGORY_TABLE, null, c);
         category.setId(id);
         return category;
     }
 
+    private Category retrieveCategory(Cursor cursor, Category category) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        cursor.moveToFirst();
+
+        //If category is not deleted
+        if (cursor.getInt(cursor.getColumnIndex(DBHelper.DELETED)) == 0) {
+            return null;
+        }
+
+        //Retrieve Category
+        category.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.CATEGORY_ID)));
+        category.setName(cursor.getString(cursor.getColumnIndex(DBHelper.CATEGORY_NAME)));
+        cursor.close();
+
+        //Update deleted value
+        String where = DBHelper.CATEGORY_ID + "=" + category.getId();
+
+        ContentValues s = new ContentValues();
+        s.put(DBHelper.DELETED, false);
+        s.put(DBHelper.CATEGORY_COLOR, category.getColor());
+
+        if (db.update(DBHelper.CATEGORY_TABLE, s, where, null) > 0) {
+            //Mark all series as deleted for this category
+            for (Serie serie : getSerieByCategory(category)) {
+                updateSerie(serie, false);
+            }
+            return category;
+        }
+        return null;
+    }
+
     public boolean removeCategory(String categoryName) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        Category category = getCategory(categoryName);
 
-        String delete = DBHelper.CATEGORY_NAME + "='" + categoryName + "'";
+        String where = DBHelper.CATEGORY_NAME + "='" + categoryName + "'";
 
-        return (db.delete(DBHelper.CATEGORY_TABLE, delete, null)) > 0;
+        ContentValues c = new ContentValues();
+        c.put(DBHelper.DELETED, true);
+
+        if (db.update(DBHelper.CATEGORY_TABLE, c, where, null) > 0) {
+            for (Serie serie : getSerieByCategory(category)) {
+                updateSerie(serie, true);
+            }
+            return true;
+        }
+        return false;
     }
     //endregion
 
@@ -99,7 +159,8 @@ public class DAO {
                 + "COALESCE(" + DBHelper.SERIE_SEASON + ", -1) AS " + DBHelper.SERIE_SEASON + ", "
                 + DBHelper.SERIE_IMAGE
                 + " FROM " + DBHelper.SERIE_TABLE
-                + " WHERE " + DBHelper.SERIE_CATEGORY + " = " + category.getId() + " ORDER BY " + DBHelper.SERIE_NAME;
+                + " WHERE " + DBHelper.SERIE_CATEGORY + " = " + category.getId()
+                + " AND " + IS_NOT_DELETED + " ORDER BY " + DBHelper.SERIE_NAME;
         Cursor cursor = db.rawQuery(execute, null);
 
         while (cursor != null && cursor.moveToNext()) {
@@ -125,8 +186,7 @@ public class DAO {
         String checkup = "SELECT * FROM " + DBHelper.SERIE_TABLE + " WHERE " + DBHelper.SERIE_NAME + " = '" + serie.getName() + "'";
         Cursor cursor = db.rawQuery(checkup, null);
         if (cursor.getCount() > 0) {
-            cursor.close();
-            return null;
+            return retrieveSerie(cursor, serie);
         }
         cursor.close();
 
@@ -136,19 +196,85 @@ public class DAO {
         s.put(DBHelper.SERIE_CHAPTER, serie.getChapter());
         s.put(DBHelper.SERIE_SEASON, serie.getSeason());
         s.put(DBHelper.SERIE_IMAGE, serie.getImageUrl());
+        s.put(DBHelper.DELETED, false);
 
         long id = db.insert(DBHelper.SERIE_TABLE, null, s);
         serie.setId(id);
         return serie;
     }
 
+    private Serie retrieveSerie(Cursor cursor, Serie serie) {
+        cursor.moveToFirst();
+
+        //If serie is not deleted
+        if (cursor.getInt(cursor.getColumnIndex(DBHelper.DELETED)) == 0) {
+            return null;
+        }
+
+        //Retrieve Serie
+        serie.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.SERIE_ID)));
+        cursor.close();
+
+        //Update deleted value
+        if (updateSerie(serie, false)) {
+            return serie;
+        }
+        return null;
+    }
+
     public boolean removeSerie(long serieId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        String delete = DBHelper.SERIE_ID + "='" + serieId + "'";
+        String where = DBHelper.SERIE_ID + "='" + serieId + "'";
 
-        return (db.delete(DBHelper.SERIE_TABLE, delete, null)) > 0;
+        ContentValues s = new ContentValues();
+        s.put(DBHelper.DELETED, true);
+
+        return db.update(DBHelper.SERIE_TABLE, s, where, null) > 0;
     }
 
+    private boolean updateSerie(Serie serie, boolean deleted) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String where = DBHelper.SERIE_ID + "=" + serie.getId();
+
+        ContentValues s = new ContentValues();
+        s.put(DBHelper.DELETED, deleted);
+        s.put(DBHelper.SERIE_CHAPTER, serie.getChapter());
+        s.put(DBHelper.SERIE_SEASON, serie.getSeason());
+        s.put(DBHelper.SERIE_IMAGE, serie.getImageUrl());
+        s.put(DBHelper.SERIE_CATEGORY, serie.getCategory().getId());
+
+        return db.update(DBHelper.SERIE_TABLE, s, where, null) > 0;
+    }
+
+    public boolean updateSerieChapter(long serieId, int chapter) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String where = DBHelper.SERIE_ID + "=" + serieId;
+
+        ContentValues s = new ContentValues();
+        s.put(DBHelper.SERIE_CHAPTER, chapter);
+
+        return db.update(DBHelper.SERIE_TABLE, s, where, null) > 0;
+    }
+
+    public boolean updateSerieChapter(Serie serie, int chapter) {
+        return updateSerieChapter(serie.getId(), chapter);
+    }
+
+    public boolean updateSerieSeason(long serieId, int season) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        String where = DBHelper.SERIE_ID + "=" + serieId;
+
+        ContentValues s = new ContentValues();
+        s.put(DBHelper.SERIE_SEASON, season);
+
+        return db.update(DBHelper.SERIE_TABLE, s, where, null) > 0;
+    }
+
+    public boolean updateSerieSeason(Serie serie, int season) {
+        return updateSerieSeason(serie.getId(), season);
+    }
     //endregion
 }

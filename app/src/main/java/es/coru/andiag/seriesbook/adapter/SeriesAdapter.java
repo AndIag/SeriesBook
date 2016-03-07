@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.vi.swipenumberpicker.OnValueChangeListener;
 import com.vi.swipenumberpicker.SwipeNumberPicker;
 
 import java.util.ArrayList;
@@ -154,6 +155,15 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             this.v = itemView;
             textTitle = (TextView) v.findViewById(R.id.textTitle);
             chapterPicker = (SwipeNumberPicker) v.findViewById(R.id.picker_chapter);
+            chapterPicker.setOnValueChangeListener(new OnValueChangeListener() {
+                @Override
+                public boolean onValueChange(SwipeNumberPicker view, int oldValue, int newValue) {
+                    if (newValue <= view.getMaxValue() && newValue >= view.getMinValue()) {
+                        return DAO.getInstance(context).updateSerieChapter(seriesList.get(position), newValue);
+                    }
+                    return false;
+                }
+            });
             cardView = (CardView) v.findViewById(R.id.card_view);
             cardView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -174,6 +184,15 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public NoImageSerieItem(View itemView) {
             super(itemView);
             seasonPicker = (SwipeNumberPicker) v.findViewById(R.id.picker_season);
+            seasonPicker.setOnValueChangeListener(new OnValueChangeListener() {
+                @Override
+                public boolean onValueChange(SwipeNumberPicker view, int oldValue, int newValue) {
+                    if (newValue <= view.getMaxValue() && newValue >= view.getMinValue()) {
+                        return DAO.getInstance(context).updateSerieSeason(seriesList.get(position), newValue);
+                    }
+                    return false;
+                }
+            });
         }
     }
 
@@ -193,6 +212,15 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public CompleteSerieItem(View view) {
             super(view);
             seasonPicker = (SwipeNumberPicker) v.findViewById(R.id.picker_season);
+            seasonPicker.setOnValueChangeListener(new OnValueChangeListener() {
+                @Override
+                public boolean onValueChange(SwipeNumberPicker view, int oldValue, int newValue) {
+                    if (newValue <= view.getMaxValue() && newValue >= view.getMinValue()) {
+                        return DAO.getInstance(context).updateSerieSeason(seriesList.get(position), newValue);
+                    }
+                    return false;
+                }
+            });
             image = (ImageView) v.findViewById(R.id.imagePoster);
         }
     }
