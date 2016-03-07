@@ -149,7 +149,7 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
         ImageButton imageButton = (ImageButton) rootView.findViewById(R.id.add_button);
         imageButton.setOnClickListener(this);
 
-        adapter.updateSeries(DAO.getInstance(getActivity()).getSerieByCategory(category));
+        adapter.updateSeries(DAO.getInstance(getActivity()).getSerieByCategory(category, false));
         slideAdapter.notifyDataSetChanged();
 
         return rootView;

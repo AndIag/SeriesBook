@@ -120,7 +120,7 @@ public class DAO {
 
         if (db.update(DBHelper.CATEGORY_TABLE, s, where, null) > 0) {
             //Mark all series as deleted for this category
-            for (Serie serie : getSerieByCategory(category)) {
+            for (Serie serie : getSerieByCategory(category, true)) {
                 updateSerie(serie, false);
             }
             return category;
@@ -128,7 +128,7 @@ public class DAO {
         return null;
     }
 
-    public boolean removeCategory(String categoryName) {
+    public Category removeCategory(String categoryName) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Category category = getCategory(categoryName);
 
@@ -138,21 +138,28 @@ public class DAO {
         c.put(DBHelper.DELETED, true);
 
         if (db.update(DBHelper.CATEGORY_TABLE, c, where, null) > 0) {
-            for (Serie serie : getSerieByCategory(category)) {
+            for (Serie serie : getSerieByCategory(category, false)) {
                 updateSerie(serie, true);
             }
-            return true;
+            return category;
         }
-        return false;
+        return null;
     }
     //endregion
 
     //region Series
-    public List<Serie> getSerieByCategory(Category category) {
+    public List<Serie> getSerieByCategory(Category category, boolean deleted) {
         List<Serie> series = new ArrayList<>();
         Serie serie;
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String wantDeleted;
+        if (deleted) {
+            wantDeleted = IS_DELETED;
+        } else {
+            wantDeleted = IS_NOT_DELETED;
+        }
 
         String execute = "SELECT " + DBHelper.SERIE_ID + ", "
                 + DBHelper.SERIE_NAME + ", " + DBHelper.SERIE_CHAPTER + ", "
@@ -160,7 +167,7 @@ public class DAO {
                 + DBHelper.SERIE_IMAGE
                 + " FROM " + DBHelper.SERIE_TABLE
                 + " WHERE " + DBHelper.SERIE_CATEGORY + " = " + category.getId()
-                + " AND " + IS_NOT_DELETED + " ORDER BY " + DBHelper.SERIE_NAME;
+                + " AND " + wantDeleted + " ORDER BY " + DBHelper.SERIE_NAME + " DESC";
         Cursor cursor = db.rawQuery(execute, null);
 
         while (cursor != null && cursor.moveToNext()) {
@@ -239,10 +246,6 @@ public class DAO {
 
         ContentValues s = new ContentValues();
         s.put(DBHelper.DELETED, deleted);
-        s.put(DBHelper.SERIE_CHAPTER, serie.getChapter());
-        s.put(DBHelper.SERIE_SEASON, serie.getSeason());
-        s.put(DBHelper.SERIE_IMAGE, serie.getImageUrl());
-        s.put(DBHelper.SERIE_CATEGORY, serie.getCategory().getId());
 
         return db.update(DBHelper.SERIE_TABLE, s, where, null) > 0;
     }
