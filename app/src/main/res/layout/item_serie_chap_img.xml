@@ -42,8 +42,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
+                android:gravity="center"
                 android:text="The Walking Dead"
-                android:textAlignment="center"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="?attr/colorAccent" />
 
@@ -65,8 +65,8 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/picker_chapter"
                 android:layout_centerHorizontal="true"
+                android:gravity="center"
                 android:text="@string/chapter"
-                android:textAlignment="center"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </RelativeLayout>
 

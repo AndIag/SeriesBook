@@ -20,9 +20,10 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:foregroundGravity="center"
             android:gravity="center"
             android:text="The Walking Dead"
-            android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?attr/colorAccent" />
 
@@ -33,6 +34,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             app:snp_arrowColor="@android:color/white"
             app:snp_backgroundColor="?attr/colorAccent"
@@ -45,12 +47,12 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_alignParentTop="true"
+            android:layout_marginEnd="3dp"
             android:layout_marginRight="3dp"
             android:layout_toLeftOf="@+id/picker_chapter"
             android:layout_toStartOf="@+id/picker_chapter"
             android:gravity="center"
             android:text="@string/chapter"
-            android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </RelativeLayout>

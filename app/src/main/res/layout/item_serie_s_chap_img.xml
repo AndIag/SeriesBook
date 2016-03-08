@@ -31,9 +31,10 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:layout_margin="16dp"
+            android:layout_toEndOf="@+id/imagePoster"
             android:layout_toRightOf="@+id/imagePoster"
+            android:gravity="center"
             android:text="The Walking Dead"
-            android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="?attr/colorAccent" />
 
@@ -73,8 +74,8 @@
             android:layout_alignLeft="@+id/picker_chapter"
             android:layout_alignRight="@+id/picker_chapter"
             android:layout_alignStart="@+id/picker_chapter"
+            android:gravity="center"
             android:text="@string/season"
-            android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
@@ -86,8 +87,8 @@
             android:layout_alignRight="@+id/picker_season"
             android:layout_alignStart="@+id/picker_season"
             android:layout_alignTop="@+id/textView2"
+            android:gravity="center"
             android:text="@string/chapter"
-            android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </RelativeLayout>
