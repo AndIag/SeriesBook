@@ -22,9 +22,9 @@
     <string name="removing_category">Removing Category</string>
     <string name="creating_category_duplicate_error">Duplicated Category Name</string>
 
-    <!-- Serie -->
+    <!-- Series -->
     <string name="removing_serie">Removing Serie</string>
-    <string name="creating_serie">Creating serie</string>
+    <string name="creating_serie">Creating series</string>
     <string name="creating_serie_duplicate_error">Duplicated Serie Name</string>
 
     <!-- Dialogs -->
@@ -33,7 +33,7 @@
     <string name="error_category">Required name!</string>
     <string name="season">Season</string>
     <string name="chapter">Episode</string>
-    <string name="serie">Serie</string>
+    <string name="series">Serie</string>
     <string name="show_seasons">The TV Show has got seasons</string>
 
     <string name="action_settings">Settings</string>

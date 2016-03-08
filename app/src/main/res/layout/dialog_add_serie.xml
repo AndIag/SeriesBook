@@ -13,7 +13,7 @@
             android:id="@+id/serieNameText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/serie"
+            android:hint="@string/series"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     </android.support.design.widget.TextInputLayout>

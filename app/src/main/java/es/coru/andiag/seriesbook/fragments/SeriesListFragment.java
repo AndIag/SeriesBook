@@ -25,7 +25,7 @@ import es.coru.andiag.seriesbook.activities.MainActivity;
 import es.coru.andiag.seriesbook.adapter.SeriesAdapter;
 import es.coru.andiag.seriesbook.db.DAO;
 import es.coru.andiag.seriesbook.entities.Category;
-import es.coru.andiag.seriesbook.entities.Serie;
+import es.coru.andiag.seriesbook.entities.Series;
 import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
 
 /**
@@ -50,32 +50,32 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
 
             boolean a = !serieName.getText().toString().matches("");
             if (a) {
-                Serie serie = new Serie();
-                serie.setName(serieName.getText().toString());
+                Series series = new Series();
+                series.setName(serieName.getText().toString());
                 //Add chapter
                 int numChapter = 0;
                 if (!chapter.getText().toString().equals("")) {
                     numChapter = Integer.parseInt(chapter.getText().toString());
                 }
-                serie.setChapter(numChapter);
+                series.setChapter(numChapter);
                 //If showed, add season
                 if (season.getVisibility() == View.VISIBLE) {
                     int numSeason = 0;
                     if (!season.getText().toString().equals("")) {
                         numSeason = Integer.parseInt(season.getText().toString());
                     }
-                    serie.setSeason(numSeason);
+                    series.setSeason(numSeason);
                 }
                 //Add category
-                serie.setCategory(category);
+                series.setCategory(category);
 
-                serie = DAO.getInstance(mainActivity).addSerie(serie);
-                if (serie != null) {
+                series = DAO.getInstance(mainActivity).addSerie(series);
+                if (series != null) {
                     Toast.makeText(mainActivity,
                             getResources().getString(R.string.creating_serie) + " : " + serieName.getText().toString(),
                             Toast.LENGTH_SHORT).show();
 
-                    adapter.addSerie(serie);
+                    adapter.addSeries(series);
                     slideAdapter.notifyItemInserted(0);
                 } else {
                     Toast.makeText(mainActivity,
@@ -97,6 +97,10 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
         args.putSerializable(ARG_CATEGORY, category);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void notifyItemRemoved(int position) {
+        slideAdapter.notifyItemRemoved(position);
     }
 
     @Override

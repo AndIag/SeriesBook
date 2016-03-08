@@ -19,7 +19,8 @@ import java.util.List;
 
 import es.coru.andiag.seriesbook.R;
 import es.coru.andiag.seriesbook.db.DAO;
-import es.coru.andiag.seriesbook.entities.Serie;
+import es.coru.andiag.seriesbook.entities.Series;
+import es.coru.andiag.seriesbook.fragments.SeriesListFragment;
 
 /**
  * Created by iagoc on 22/02/2016.
@@ -35,9 +36,9 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private Context context;
     private Fragment fragment;
-    private List<Serie> seriesList;
+    private List<Series> seriesList;
 
-    public SeriesAdapter(Context context, Fragment fragment, List<Serie> seriesList) {
+    public SeriesAdapter(Context context, Fragment fragment, List<Series> seriesList) {
         this.seriesList = seriesList;
         this.context = context;
         this.fragment = fragment;
@@ -49,36 +50,37 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.seriesList = new ArrayList<>();
     }
 
-    public void updateSeries(List<Serie> series) {
+    public void updateSeries(List<Series> series) {
         seriesList.clear();
         seriesList.addAll(series);
         notifyDataSetChanged();
     }
 
-    public void addSerie(Serie serie, int position) {
-        seriesList.add(position, serie);
+    public void addSeries(Series series, int position) {
+        seriesList.add(position, series);
         notifyItemInserted(position);
     }
 
-    public void addSerie(Serie serie) {
-        addSerie(serie, 0);
+    public void addSeries(Series series) {
+        addSeries(series, 0);
     }
 
-    public void removeSerie(int position) {
+    public void removeSeries(int position) {
         seriesList.remove(position);
         notifyItemRemoved(position);
+        ((SeriesListFragment) fragment).notifyItemRemoved(position);
     }
 
     @Override
     public int getItemViewType(int position) {
-        Serie serie = getItem(position);
-        if ((serie.getImageUrl() == null || serie.getImageUrl().equals("")) && serie.getSeason() == -1) {
+        Series series = getItem(position);
+        if ((series.getImageUrl() == null || series.getImageUrl().equals("")) && series.getSeason() == -1) {
             return NO_SEASON_IMAGE_ITEM;
         }
-        if (serie.getImageUrl() == null || serie.getImageUrl().equals("")) {
+        if (series.getImageUrl() == null || series.getImageUrl().equals("")) {
             return NO_IMAGE_ITEM;
         }
-        if (serie.getSeason() == -1) {
+        if (series.getSeason() == -1) {
             return NO_SEASON_ITEM;
         }
         return COMPLETE_ITEM;
@@ -90,12 +92,12 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (viewType == NO_SEASON_IMAGE_ITEM) {
             itemView = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.item_serie_chap_noimg, parent, false);
-            return new NoSeasonImageSerieItem(itemView);
+            return new NoSeasonImageSeriesItem(itemView);
         }
         if (viewType == NO_IMAGE_ITEM) {
             itemView = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.item_serie_s_chap_noimg, parent, false);
-            return new NoImageSerieItem(itemView);
+            return new NoImageSeriesItem(itemView);
         }
         if (viewType == NO_SEASON_ITEM) {
             itemView = LayoutInflater.from(parent.getContext()).
@@ -105,30 +107,30 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (viewType == COMPLETE_ITEM) {
             itemView = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.item_serie_s_chap_img, parent, false);
-            return new CompleteSerieItem(itemView);
+            return new CompleteSeriesItem(itemView);
         }
 
         //By default we return the simplest layout
-        return new NoSeasonImageSerieItem(LayoutInflater.from(parent.getContext()).
+        return new NoSeasonImageSeriesItem(LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.item_serie_chap_noimg, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Serie serie = getItem(position);
+        Series series = getItem(position);
 
-        ((NoSeasonImageSerieItem) holder).position = position;
-        ((NoSeasonImageSerieItem) holder).textTitle.setText(serie.getName());
-        ((NoSeasonImageSerieItem) holder).chapterPicker.setValue(serie.getChapter(), false);
+        ((NoSeasonImageSeriesItem) holder).position = position;
+        ((NoSeasonImageSeriesItem) holder).textTitle.setText(series.getName());
+        ((NoSeasonImageSeriesItem) holder).chapterPicker.setValue(series.getChapter(), false);
 
-        if (holder instanceof NoImageSerieItem) {
-            ((NoImageSerieItem) holder).seasonPicker.setValue(serie.getSeason(), false);
+        if (holder instanceof NoImageSeriesItem) {
+            ((NoImageSeriesItem) holder).seasonPicker.setValue(series.getSeason(), false);
         }
         if (holder instanceof NoSeasonSearieItem) {
             //Añadir la carga de la imagen con volley
         }
-        if (holder instanceof CompleteSerieItem) {
-            ((CompleteSerieItem) holder).seasonPicker.setValue(serie.getChapter(), false);
+        if (holder instanceof CompleteSeriesItem) {
+            ((CompleteSeriesItem) holder).seasonPicker.setValue(series.getChapter(), false);
             //Añadir la carga de la imagen con volley
         }
     }
@@ -138,19 +140,19 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return seriesList.size();
     }
 
-    public Serie getItem(int position) {
+    public Series getItem(int position) {
         return seriesList.get(position);
     }
 
     //region ViewHolders
-    class NoSeasonImageSerieItem extends RecyclerView.ViewHolder {
+    class NoSeasonImageSeriesItem extends RecyclerView.ViewHolder {
         CardView cardView;
         TextView textTitle;
         SwipeNumberPicker chapterPicker;
         View v;
         int position;
 
-        public NoSeasonImageSerieItem(View itemView) {
+        public NoSeasonImageSeriesItem(View itemView) {
             super(itemView);
             this.v = itemView;
             textTitle = (TextView) v.findViewById(R.id.textTitle);
@@ -170,7 +172,7 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 public boolean onLongClick(View v) {
                     if (DAO.getInstance(context).removeSerie(getItem(position).getId())) {
                         Toast.makeText(context, context.getResources().getString(R.string.removing_serie), Toast.LENGTH_SHORT).show();
-                        removeSerie(position);
+                        removeSeries(position);
                     }
                     return false;
                 }
@@ -178,10 +180,10 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    class NoImageSerieItem extends NoSeasonImageSerieItem {
+    class NoImageSeriesItem extends NoSeasonImageSeriesItem {
         SwipeNumberPicker seasonPicker;
 
-        public NoImageSerieItem(View itemView) {
+        public NoImageSeriesItem(View itemView) {
             super(itemView);
             seasonPicker = (SwipeNumberPicker) v.findViewById(R.id.picker_season);
             seasonPicker.setOnValueChangeListener(new OnValueChangeListener() {
@@ -196,7 +198,7 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    class NoSeasonSearieItem extends NoSeasonImageSerieItem {
+    class NoSeasonSearieItem extends NoSeasonImageSeriesItem {
         ImageView image;
 
         public NoSeasonSearieItem(View itemView) {
@@ -205,11 +207,11 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    class CompleteSerieItem extends NoSeasonImageSerieItem {
+    class CompleteSeriesItem extends NoSeasonImageSeriesItem {
         SwipeNumberPicker seasonPicker;
         ImageView image;
 
-        public CompleteSerieItem(View view) {
+        public CompleteSeriesItem(View view) {
             super(view);
             seasonPicker = (SwipeNumberPicker) v.findViewById(R.id.picker_season);
             seasonPicker.setOnValueChangeListener(new OnValueChangeListener() {

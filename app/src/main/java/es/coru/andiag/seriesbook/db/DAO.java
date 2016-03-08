@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.coru.andiag.seriesbook.entities.Category;
-import es.coru.andiag.seriesbook.entities.Serie;
+import es.coru.andiag.seriesbook.entities.Series;
 
 /**
  * Created by iagoc on 20/02/2016.
@@ -47,7 +47,6 @@ public class DAO {
             category = new Category();
             category.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.CATEGORY_ID)));
             category.setName(cursor.getString(cursor.getColumnIndex(DBHelper.CATEGORY_NAME)));
-            category.setColor(cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_COLOR)));
             cursor.close();
         }
         return category;
@@ -66,7 +65,6 @@ public class DAO {
             category = new Category();
             category.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.CATEGORY_ID)));
             category.setName(cursor.getString(cursor.getColumnIndex(DBHelper.CATEGORY_NAME)));
-            category.setColor(cursor.getInt(cursor.getColumnIndex(DBHelper.CATEGORY_COLOR)));
             categories.add(category);
         }
         if (cursor != null) cursor.close();
@@ -89,7 +87,6 @@ public class DAO {
         //Insert category
         ContentValues c = new ContentValues();
         c.put(DBHelper.CATEGORY_NAME, category.getName());
-        c.put(DBHelper.CATEGORY_COLOR, category.getColor());
         c.put(DBHelper.DELETED, false);
 
         long id = db.insert(DBHelper.CATEGORY_TABLE, null, c);
@@ -116,12 +113,11 @@ public class DAO {
 
         ContentValues s = new ContentValues();
         s.put(DBHelper.DELETED, false);
-        s.put(DBHelper.CATEGORY_COLOR, category.getColor());
 
         if (db.update(DBHelper.CATEGORY_TABLE, s, where, null) > 0) {
             //Mark all series as deleted for this category
-            for (Serie serie : getSerieByCategory(category, true)) {
-                updateSerie(serie, false);
+            for (Series series : getSerieByCategory(category, true)) {
+                updateSerie(series, false);
             }
             return category;
         }
@@ -138,8 +134,8 @@ public class DAO {
         c.put(DBHelper.DELETED, true);
 
         if (db.update(DBHelper.CATEGORY_TABLE, c, where, null) > 0) {
-            for (Serie serie : getSerieByCategory(category, false)) {
-                updateSerie(serie, true);
+            for (Series series : getSerieByCategory(category, false)) {
+                updateSerie(series, true);
             }
             return category;
         }
@@ -148,9 +144,9 @@ public class DAO {
     //endregion
 
     //region Series
-    public List<Serie> getSerieByCategory(Category category, boolean deleted) {
-        List<Serie> series = new ArrayList<>();
-        Serie serie;
+    public List<Series> getSerieByCategory(Category category, boolean deleted) {
+        List<Series> series = new ArrayList<>();
+        Series serie;
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -161,23 +157,23 @@ public class DAO {
             wantDeleted = IS_NOT_DELETED;
         }
 
-        String execute = "SELECT " + DBHelper.SERIE_ID + ", "
-                + DBHelper.SERIE_NAME + ", " + DBHelper.SERIE_CHAPTER + ", "
-                + "COALESCE(" + DBHelper.SERIE_SEASON + ", -1) AS " + DBHelper.SERIE_SEASON + ", "
-                + DBHelper.SERIE_IMAGE
-                + " FROM " + DBHelper.SERIE_TABLE
-                + " WHERE " + DBHelper.SERIE_CATEGORY + " = " + category.getId()
-                + " AND " + wantDeleted + " ORDER BY " + DBHelper.SERIE_NAME + " DESC";
+        String execute = "SELECT " + DBHelper.SERIES_ID + ", "
+                + DBHelper.SERIES_NAME + ", " + DBHelper.SERIES_CHAPTER + ", "
+                + "COALESCE(" + DBHelper.SERIES_SEASON + ", -1) AS " + DBHelper.SERIES_SEASON + ", "
+                + DBHelper.SERIES_IMAGE
+                + " FROM " + DBHelper.SERIES_TABLE
+                + " WHERE " + DBHelper.SERIES_CATEGORY + " = " + category.getId()
+                + " AND " + wantDeleted + " ORDER BY " + DBHelper.SERIES_NAME + " DESC";
         Cursor cursor = db.rawQuery(execute, null);
 
         while (cursor != null && cursor.moveToNext()) {
-            serie = new Serie();
-            serie.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.SERIE_ID)));
-            serie.setName(cursor.getString(cursor.getColumnIndex(DBHelper.SERIE_NAME)));
+            serie = new Series();
+            serie.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.SERIES_ID)));
+            serie.setName(cursor.getString(cursor.getColumnIndex(DBHelper.SERIES_NAME)));
             serie.setCategory(category);
-            serie.setChapter(cursor.getInt(cursor.getColumnIndex(DBHelper.SERIE_CHAPTER)));
-            serie.setSeason(cursor.getInt(cursor.getColumnIndex(DBHelper.SERIE_SEASON)));
-            serie.setImageUrl(cursor.getString(cursor.getColumnIndex(DBHelper.SERIE_IMAGE)));
+            serie.setChapter(cursor.getInt(cursor.getColumnIndex(DBHelper.SERIES_CHAPTER)));
+            serie.setSeason(cursor.getInt(cursor.getColumnIndex(DBHelper.SERIES_SEASON)));
+            serie.setImageUrl(cursor.getString(cursor.getColumnIndex(DBHelper.SERIES_IMAGE)));
             series.add(serie);
         }
         if (cursor != null) cursor.close();
@@ -186,45 +182,45 @@ public class DAO {
         return series;
     }
 
-    public Serie addSerie(Serie serie) {
+    public Series addSerie(Series series) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        //Check if the serie already exists
-        String checkup = "SELECT * FROM " + DBHelper.SERIE_TABLE + " WHERE " + DBHelper.SERIE_NAME + " = '" + serie.getName() + "'";
+        //Check if the series already exists
+        String checkup = "SELECT * FROM " + DBHelper.SERIES_TABLE + " WHERE " + DBHelper.SERIES_NAME + " = '" + series.getName() + "'";
         Cursor cursor = db.rawQuery(checkup, null);
         if (cursor.getCount() > 0) {
-            return retrieveSerie(cursor, serie);
+            return retrieveSerie(cursor, series);
         }
         cursor.close();
 
         ContentValues s = new ContentValues();
-        s.put(DBHelper.SERIE_NAME, serie.getName());
-        s.put(DBHelper.SERIE_CATEGORY, serie.getCategory().getId());
-        s.put(DBHelper.SERIE_CHAPTER, serie.getChapter());
-        s.put(DBHelper.SERIE_SEASON, serie.getSeason());
-        s.put(DBHelper.SERIE_IMAGE, serie.getImageUrl());
+        s.put(DBHelper.SERIES_NAME, series.getName());
+        s.put(DBHelper.SERIES_CATEGORY, series.getCategory().getId());
+        s.put(DBHelper.SERIES_CHAPTER, series.getChapter());
+        s.put(DBHelper.SERIES_SEASON, series.getSeason());
+        s.put(DBHelper.SERIES_IMAGE, series.getImageUrl());
         s.put(DBHelper.DELETED, false);
 
-        long id = db.insert(DBHelper.SERIE_TABLE, null, s);
-        serie.setId(id);
-        return serie;
+        long id = db.insert(DBHelper.SERIES_TABLE, null, s);
+        series.setId(id);
+        return series;
     }
 
-    private Serie retrieveSerie(Cursor cursor, Serie serie) {
+    private Series retrieveSerie(Cursor cursor, Series series) {
         cursor.moveToFirst();
 
-        //If serie is not deleted
+        //If series is not deleted
         if (cursor.getInt(cursor.getColumnIndex(DBHelper.DELETED)) == 0) {
             return null;
         }
 
-        //Retrieve Serie
-        serie.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.SERIE_ID)));
+        //Retrieve Series
+        series.setId(cursor.getLong(cursor.getColumnIndex(DBHelper.SERIES_ID)));
         cursor.close();
 
         //Update deleted value
-        if (updateSerie(serie, false)) {
-            return serie;
+        if (updateSerie(series, false)) {
+            return series;
         }
         return null;
     }
@@ -232,52 +228,52 @@ public class DAO {
     public boolean removeSerie(long serieId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        String where = DBHelper.SERIE_ID + "='" + serieId + "'";
+        String where = DBHelper.SERIES_ID + "='" + serieId + "'";
 
         ContentValues s = new ContentValues();
         s.put(DBHelper.DELETED, true);
 
-        return db.update(DBHelper.SERIE_TABLE, s, where, null) > 0;
+        return db.update(DBHelper.SERIES_TABLE, s, where, null) > 0;
     }
 
-    private boolean updateSerie(Serie serie, boolean deleted) {
+    private boolean updateSerie(Series series, boolean deleted) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        String where = DBHelper.SERIE_ID + "=" + serie.getId();
+        String where = DBHelper.SERIES_ID + "=" + series.getId();
 
         ContentValues s = new ContentValues();
         s.put(DBHelper.DELETED, deleted);
 
-        return db.update(DBHelper.SERIE_TABLE, s, where, null) > 0;
+        return db.update(DBHelper.SERIES_TABLE, s, where, null) > 0;
     }
 
     public boolean updateSerieChapter(long serieId, int chapter) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        String where = DBHelper.SERIE_ID + "=" + serieId;
+        String where = DBHelper.SERIES_ID + "=" + serieId;
 
         ContentValues s = new ContentValues();
-        s.put(DBHelper.SERIE_CHAPTER, chapter);
+        s.put(DBHelper.SERIES_CHAPTER, chapter);
 
-        return db.update(DBHelper.SERIE_TABLE, s, where, null) > 0;
+        return db.update(DBHelper.SERIES_TABLE, s, where, null) > 0;
     }
 
-    public boolean updateSerieChapter(Serie serie, int chapter) {
-        return updateSerieChapter(serie.getId(), chapter);
+    public boolean updateSerieChapter(Series series, int chapter) {
+        return updateSerieChapter(series.getId(), chapter);
     }
 
     public boolean updateSerieSeason(long serieId, int season) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        String where = DBHelper.SERIE_ID + "=" + serieId;
+        String where = DBHelper.SERIES_ID + "=" + serieId;
 
         ContentValues s = new ContentValues();
-        s.put(DBHelper.SERIE_SEASON, season);
+        s.put(DBHelper.SERIES_SEASON, season);
 
-        return db.update(DBHelper.SERIE_TABLE, s, where, null) > 0;
+        return db.update(DBHelper.SERIES_TABLE, s, where, null) > 0;
     }
 
-    public boolean updateSerieSeason(Serie serie, int season) {
-        return updateSerieSeason(serie.getId(), season);
+    public boolean updateSerieSeason(Series series, int season) {
+        return updateSerieSeason(series.getId(), season);
     }
     //endregion
 }

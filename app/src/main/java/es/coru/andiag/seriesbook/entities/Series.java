@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by Canalejas on 01/03/2016.
  */
-public class Serie implements Serializable {
+public class Series implements Serializable {
 
     private long id;
     private Category category;
