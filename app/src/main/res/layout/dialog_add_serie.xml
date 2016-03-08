@@ -13,7 +13,8 @@
             android:id="@+id/serieNameText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/serie" />
+            android:hint="@string/serie"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -21,55 +22,63 @@
         android:id="@+id/show_season_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignEnd="@+id/input_layout_seriename"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/input_layout_seriename"
         android:layout_below="@id/input_layout_seriename"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/show_season_checkbox"
-        android:layout_below="@id/input_layout_seriename"
-        android:layout_toLeftOf="@id/show_season_checkbox"
-        android:layout_toStartOf="@id/show_season_checkbox"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="6dp"
+        android:checked="false"
         android:text="@string/show_seasons" />
 
     <TextView
         android:id="@+id/text_chapter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/show_season_checkbox"
-        android:text="@string/chapter" />
+        android:layout_below="@+id/show_season_checkbox"
+        android:layout_marginLeft="32dp"
+        android:layout_toEndOf="@+id/text_season"
+        android:layout_toRightOf="@+id/text_season"
+        android:text="@string/chapter"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
     <EditText
         android:id="@+id/chapter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/show_season_checkbox"
-        android:layout_toEndOf="@id/text_chapter"
-        android:layout_toRightOf="@id/text_chapter"
+        android:layout_alignEnd="@+id/text_chapter"
+        android:layout_alignLeft="@+id/text_chapter"
+        android:layout_alignRight="@+id/text_chapter"
+        android:layout_alignStart="@+id/text_chapter"
+        android:layout_below="@+id/text_chapter"
         android:hint="0"
         android:inputType="number" />
+
 
     <TextView
         android:id="@+id/text_season"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/chapter"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/show_season_checkbox"
+        android:layout_marginLeft="32dp"
         android:text="@string/season"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:visibility="gone" />
 
     <EditText
         android:id="@+id/season"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/chapter"
-        android:layout_toEndOf="@id/text_season"
-        android:layout_toRightOf="@id/text_season"
+        android:layout_alignLeft="@+id/text_season"
+        android:layout_alignStart="@+id/text_season"
+        android:layout_below="@+id/text_season"
+        android:layout_toLeftOf="@+id/text_chapter"
         android:hint="0"
         android:inputType="number"
         android:visibility="gone" />
+
 
 </RelativeLayout>

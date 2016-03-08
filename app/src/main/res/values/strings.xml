@@ -34,7 +34,7 @@
     <string name="season">Season</string>
     <string name="chapter">Episode</string>
     <string name="serie">Serie</string>
-    <string name="show_seasons">Show Seasons?</string>
+    <string name="show_seasons">The TV Show has got seasons</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
