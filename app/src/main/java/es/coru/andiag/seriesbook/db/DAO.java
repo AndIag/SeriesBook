@@ -38,7 +38,7 @@ public class DAO {
     //region Categories
     private Category getCategory(String categoryName) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String select = "SELECT * FROM " + DBHelper.CATEGORY_TABLE + " WHERE " + DBHelper.CATEGORY_NAME + " = '" + categoryName + "' AND " + IS_NOT_DELETED;
+        String select = "SELECT * FROM " + DBHelper.CATEGORY_TABLE + " WHERE " + DBHelper.CATEGORY_NAME + " = '" + categoryName.toLowerCase() + "' AND " + IS_NOT_DELETED;
         Cursor cursor = db.rawQuery(select, null);
 
         Category category = null;
@@ -77,7 +77,7 @@ public class DAO {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         //Check if the category already exists
-        String checkup = "SELECT * FROM " + DBHelper.CATEGORY_TABLE + " WHERE " + DBHelper.CATEGORY_NAME + " = '" + category.getName() + "'";
+        String checkup = "SELECT * FROM " + DBHelper.CATEGORY_TABLE + " WHERE " + DBHelper.CATEGORY_NAME + " = '" + category.getName().toLowerCase() + "'";
         Cursor cursor = db.rawQuery(checkup, null);
         if (cursor.getCount() > 0) {
             return retrieveCategory(cursor, category);
@@ -86,7 +86,7 @@ public class DAO {
 
         //Insert category
         ContentValues c = new ContentValues();
-        c.put(DBHelper.CATEGORY_NAME, category.getName());
+        c.put(DBHelper.CATEGORY_NAME, category.getName().toLowerCase());
         c.put(DBHelper.DELETED, false);
 
         long id = db.insert(DBHelper.CATEGORY_TABLE, null, c);
@@ -128,7 +128,7 @@ public class DAO {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         Category category = getCategory(categoryName);
 
-        String where = DBHelper.CATEGORY_NAME + "='" + categoryName + "'";
+        String where = DBHelper.CATEGORY_NAME + "='" + categoryName.toLowerCase() + "'";
 
         ContentValues c = new ContentValues();
         c.put(DBHelper.DELETED, true);
@@ -147,7 +147,6 @@ public class DAO {
     public List<Series> getSerieByCategory(Category category, boolean deleted) {
         List<Series> series = new ArrayList<>();
         Series serie;
-
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String wantDeleted;
@@ -163,7 +162,7 @@ public class DAO {
                 + DBHelper.SERIES_IMAGE
                 + " FROM " + DBHelper.SERIES_TABLE
                 + " WHERE " + DBHelper.SERIES_CATEGORY + " = " + category.getId()
-                + " AND " + wantDeleted + " ORDER BY " + DBHelper.SERIES_NAME + " DESC";
+                + " AND " + wantDeleted + " ORDER BY " + DBHelper.SERIES_NAME + " ASC";
         Cursor cursor = db.rawQuery(execute, null);
 
         while (cursor != null && cursor.moveToNext()) {
@@ -186,7 +185,7 @@ public class DAO {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         //Check if the series already exists
-        String checkup = "SELECT * FROM " + DBHelper.SERIES_TABLE + " WHERE " + DBHelper.SERIES_NAME + " = '" + series.getName() + "'";
+        String checkup = "SELECT * FROM " + DBHelper.SERIES_TABLE + " WHERE " + DBHelper.SERIES_NAME + " = '" + series.getName().toLowerCase() + "'";
         Cursor cursor = db.rawQuery(checkup, null);
         if (cursor.getCount() > 0) {
             return retrieveSerie(cursor, series);
@@ -194,7 +193,7 @@ public class DAO {
         cursor.close();
 
         ContentValues s = new ContentValues();
-        s.put(DBHelper.SERIES_NAME, series.getName());
+        s.put(DBHelper.SERIES_NAME, series.getName().toLowerCase());
         s.put(DBHelper.SERIES_CATEGORY, series.getCategory().getId());
         s.put(DBHelper.SERIES_CHAPTER, series.getChapter());
         s.put(DBHelper.SERIES_SEASON, series.getSeason());

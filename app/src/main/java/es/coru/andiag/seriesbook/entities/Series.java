@@ -14,6 +14,30 @@ public class Series implements Serializable {
     private int chapter;
     private String imageUrl = null;
 
+    private static String toTitleCase(String str) {
+        if (str == null) {
+            return null;
+        }
+        boolean space = true;
+        StringBuilder builder = new StringBuilder(str);
+        final int len = builder.length();
+        for (int i = 0; i < len; ++i) {
+            char c = builder.charAt(i);
+            if (space) {
+                if (!Character.isWhitespace(c)) {
+                    // Convert to title case and switch out of whitespace mode.
+                    builder.setCharAt(i, Character.toTitleCase(c));
+                    space = false;
+                }
+            } else if (Character.isWhitespace(c)) {
+                space = true;
+            } else {
+                builder.setCharAt(i, Character.toLowerCase(c));
+            }
+        }
+        return builder.toString();
+    }
+
     public long getId() {
         return id;
     }
@@ -35,7 +59,7 @@ public class Series implements Serializable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = toTitleCase(name);
     }
 
     public int getSeason() {
@@ -61,4 +85,22 @@ public class Series implements Serializable {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Series series = (Series) o;
+
+        return id == series.id && name.equals(series.name);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + name.hashCode();
+        return result;
+    }
+
 }

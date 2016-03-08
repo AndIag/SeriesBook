@@ -35,11 +35,38 @@ import es.coru.andiag.seriesbook.fragments.SettingsFragment;
 
 public class MainActivity extends BaseActivity {
 
-
     private static final long NAV_ADD_CATEGORY = 5;
     private static final long NAV_SETTINGS_IDENTIFIER = 10;
     private static final long NAV_ABOUT_IDENTIFIER = 11;
     private List<Category> categoryList;
+    private final Drawer.OnDrawerItemClickListener drawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
+        @Override
+        public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+            long identifier = drawerItem.getIdentifier();
+            if (identifier == NAV_ADD_CATEGORY) {
+                Log.d(TAG, "Adding category");
+                generateMaterialDialog(R.string.creating_category, R.layout.dialog_add_category, R.string.create, addCategoryDialogCallback);
+                return true;
+            }
+            if (identifier == NAV_SETTINGS_IDENTIFIER) {
+                getSupportFragmentManager().beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .replace(R.id.frame_container, new SettingsFragment())
+                        .commit();
+                return false;
+            }
+            if (identifier == NAV_ABOUT_IDENTIFIER) {
+                //Implement dialog about here
+                return false;
+            }
+            //Categories fragment behavior
+            getSupportFragmentManager().beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .replace(R.id.frame_container, SeriesListFragment.newInstance(categoryList.get(position - 1)))
+                    .commit();
+            return false;
+        }
+    };
     private Drawer drawer = null;
     private final MaterialDialog.SingleButtonCallback addCategoryDialogCallback = new MaterialDialog.SingleButtonCallback() {
         @Override
@@ -70,34 +97,6 @@ public class MainActivity extends BaseActivity {
                 TextInputLayout inputLayout = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_category);
                 inputLayout.setError(getApplicationContext().getString(R.string.error_category));
             }
-        }
-    };
-    private final Drawer.OnDrawerItemClickListener drawerItemClickListener = new Drawer.OnDrawerItemClickListener() {
-        @Override
-        public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-            long identifier = drawerItem.getIdentifier();
-            if (identifier == NAV_ADD_CATEGORY) {
-                Log.d(TAG, "Adding category");
-                generateMaterialDialog(R.string.creating_category, R.layout.dialog_add_category, R.string.create, addCategoryDialogCallback);
-                return true;
-            }
-            if (identifier == NAV_SETTINGS_IDENTIFIER) {
-                getSupportFragmentManager().beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(R.id.frame_container, new SettingsFragment())
-                        .commit();
-                return false;
-            }
-            if (identifier == NAV_ABOUT_IDENTIFIER) {
-                //Implement dialog about here
-                return false;
-            }
-            //Categories fragment behavior
-            getSupportFragmentManager().beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .replace(R.id.frame_container, SeriesListFragment.newInstance(categoryList.get(position - 1)))
-                    .commit();
-            return false;
         }
     };
     private final Drawer.OnDrawerItemLongClickListener drawerItemLongClickListener = new Drawer.OnDrawerItemLongClickListener() {
