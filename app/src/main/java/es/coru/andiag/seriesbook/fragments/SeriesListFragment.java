@@ -26,7 +26,8 @@ import es.coru.andiag.seriesbook.adapter.SeriesAdapter;
 import es.coru.andiag.seriesbook.db.DAO;
 import es.coru.andiag.seriesbook.entities.Category;
 import es.coru.andiag.seriesbook.entities.Series;
-import jp.wasabeef.recyclerview.animators.adapters.ScaleInAnimationAdapter;
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
+import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 /**
  * Created by Canalejas on 01/03/2016.
@@ -76,7 +77,6 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
                             Toast.LENGTH_SHORT).show();
 
                     adapter.addSeries(series);
-                    slideAdapter.notifyItemInserted(0);
                 } else {
                     Toast.makeText(mainActivity,
                             getResources().getString(R.string.creating_serie_duplicate_error),
@@ -97,10 +97,6 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
         args.putSerializable(ARG_CATEGORY, category);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public void notifyItemRemoved(int position) {
-        slideAdapter.notifyItemRemoved(position);
     }
 
     @Override
@@ -149,6 +145,7 @@ public class SeriesListFragment extends Fragment implements View.OnClickListener
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(false);
         recyclerView.setAdapter(slideAdapter);
+        recyclerView.setItemAnimator(new LandingAnimator());
 
         ImageButton imageButton = (ImageButton) rootView.findViewById(R.id.add_button);
         imageButton.setOnClickListener(this);

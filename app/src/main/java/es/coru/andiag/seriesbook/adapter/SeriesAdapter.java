@@ -20,7 +20,6 @@ import java.util.List;
 import es.coru.andiag.seriesbook.R;
 import es.coru.andiag.seriesbook.db.DAO;
 import es.coru.andiag.seriesbook.entities.Series;
-import es.coru.andiag.seriesbook.fragments.SeriesListFragment;
 
 /**
  * Created by iagoc on 22/02/2016.
@@ -37,12 +36,6 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Context context;
     private Fragment fragment;
     private List<Series> seriesList;
-
-    public SeriesAdapter(Context context, Fragment fragment, List<Series> seriesList) {
-        this.seriesList = seriesList;
-        this.context = context;
-        this.fragment = fragment;
-    }
 
     public SeriesAdapter(Context context, Fragment fragment) {
         this.fragment = fragment;
@@ -62,13 +55,12 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void addSeries(Series series) {
-        addSeries(series, 0);
+        addSeries(series, seriesList.size());
     }
 
     public void removeSeries(int position) {
         seriesList.remove(position);
         notifyItemRemoved(position);
-        ((SeriesListFragment) fragment).notifyItemRemoved(position);
     }
 
     @Override
@@ -119,7 +111,6 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Series series = getItem(position);
 
-        ((NoSeasonImageSeriesItem) holder).position = position;
         ((NoSeasonImageSeriesItem) holder).textTitle.setText(series.getName());
         ((NoSeasonImageSeriesItem) holder).chapterPicker.setValue(series.getChapter(), false);
 
@@ -150,7 +141,6 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         TextView textTitle;
         SwipeNumberPicker chapterPicker;
         View v;
-        int position;
 
         public NoSeasonImageSeriesItem(View itemView) {
             super(itemView);
@@ -161,7 +151,7 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 @Override
                 public boolean onValueChange(SwipeNumberPicker view, int oldValue, int newValue) {
                     if (newValue <= view.getMaxValue() && newValue >= view.getMinValue()) {
-                        return DAO.getInstance(context).updateSerieChapter(seriesList.get(position), newValue);
+                        return DAO.getInstance(context).updateSerieChapter(seriesList.get(getAdapterPosition()), newValue);
                     }
                     return false;
                 }
@@ -170,9 +160,9 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             cardView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if (DAO.getInstance(context).removeSerie(getItem(position).getId())) {
+                    if (DAO.getInstance(context).removeSerie(getItem(getAdapterPosition()).getId())) {
                         Toast.makeText(context, context.getResources().getString(R.string.removing_serie), Toast.LENGTH_SHORT).show();
-                        removeSeries(position);
+                        removeSeries(getAdapterPosition());
                     }
                     return false;
                 }
@@ -190,7 +180,7 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 @Override
                 public boolean onValueChange(SwipeNumberPicker view, int oldValue, int newValue) {
                     if (newValue <= view.getMaxValue() && newValue >= view.getMinValue()) {
-                        return DAO.getInstance(context).updateSerieSeason(seriesList.get(position), newValue);
+                        return DAO.getInstance(context).updateSerieSeason(seriesList.get(getAdapterPosition()), newValue);
                     }
                     return false;
                 }
@@ -218,7 +208,7 @@ public class SeriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 @Override
                 public boolean onValueChange(SwipeNumberPicker view, int oldValue, int newValue) {
                     if (newValue <= view.getMaxValue() && newValue >= view.getMinValue()) {
-                        return DAO.getInstance(context).updateSerieSeason(seriesList.get(position), newValue);
+                        return DAO.getInstance(context).updateSerieSeason(seriesList.get(getAdapterPosition()), newValue);
                     }
                     return false;
                 }
