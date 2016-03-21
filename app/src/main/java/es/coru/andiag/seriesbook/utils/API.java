@@ -18,7 +18,7 @@ public class API {
     private static final String PARAM_PAGE_SIZE = "page";
     private static final String PARAM_LANGUAGE = "language";
 
-    private static final String SIZE_POSTER = "w185";
+    private static final String SIZE_POSTER = "w500";
     private static final String SIZE_BACKDROP = "w300";
 
     public static String getSearchUrl(String keywords){
