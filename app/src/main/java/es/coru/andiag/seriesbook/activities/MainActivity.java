@@ -1,5 +1,6 @@
 package es.coru.andiag.seriesbook.activities;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -57,6 +58,8 @@ public class MainActivity extends BaseActivity {
             }
             if (identifier == NAV_ABOUT_IDENTIFIER) {
                 //Implement dialog about here
+                Intent i = new Intent(MainActivity.this,CreateSerieActivity.class);
+                startActivity(i);
                 return false;
             }
             //Categories fragment behavior
