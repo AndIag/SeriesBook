@@ -22,6 +22,7 @@
         <activity
             android:name=".activities.BaseActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activities.CreateSerieActivity"></activity>
     </application>
 
 </manifest>

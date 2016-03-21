@@ -54,4 +54,6 @@ dependencies {
         transitive = true
     }
     compile 'com.github.supervital:swipenumberpicker:1.0.3'
+    compile 'com.mcxiaoke.volley:library:1.0.19'
+    compile 'com.google.code.gson:gson:2.6.2'
 }
