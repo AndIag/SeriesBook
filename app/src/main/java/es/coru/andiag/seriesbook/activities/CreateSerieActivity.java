@@ -3,6 +3,7 @@ package es.coru.andiag.seriesbook.activities;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -43,7 +44,7 @@ public class CreateSerieActivity extends BaseActivity {
 
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler);
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this,2);
+        RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(3,1);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(false);
         recyclerView.setAdapter(alphaAdapter);

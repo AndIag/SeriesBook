@@ -15,14 +15,14 @@
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/imagePoster"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:scaleType="fitCenter"
+            android:layout_width="120dp"
+            android:layout_height="165dp"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
             android:src="@drawable/no_poster"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="8dp" />
+            android:layout_alignParentStart="true" />
 
         <TextView
             android:id="@+id/textTitle"
@@ -31,14 +31,16 @@
             android:gravity="center"
             android:text="The Walking Dead"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?attr/colorAccent"
-            android:layout_below="@+id/imagePoster"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignRight="@+id/imagePoster"
             android:layout_alignEnd="@+id/imagePoster"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_below="@+id/imagePoster"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:background="?attr/colorAccent"
+            android:layout_alignParentBottom="true"
+            android:textColor="?android:attr/colorBackground" />
 
     </RelativeLayout>
 
